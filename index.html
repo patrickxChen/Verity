@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verity - Bias Detection Search</title>
+    <title>Verity - Bias Detection</title>
     <style>
         * {
             margin: 0;
@@ -13,8 +13,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #ffffff;
-            color: #202124;
+            background: #1e1e1e;
+            color: #e0e0e0;
         }
 
         /* Navbar */
@@ -23,13 +23,14 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 2rem;
-            border-bottom: 1px solid #dadce0;
+            border-bottom: 1px solid #2d2d2d;
+            background: #252525;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: #4285f4;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #e0e0e0;
         }
 
         .nav-links {
@@ -39,14 +40,14 @@
         }
 
         .nav-links a {
-            color: #5f6368;
+            color: #888888;
             text-decoration: none;
             font-size: 0.9rem;
             transition: color 0.2s;
         }
 
         .nav-links a:hover {
-            color: #202124;
+            color: #e0e0e0;
         }
 
         /* Hero Section */
@@ -55,17 +56,17 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 40vh;
-            padding: 2rem;
+            min-height: 35vh;
+            padding: 3rem 2rem;
         }
 
         .hero h1 {
-            font-size: 5rem;
+            font-size: 4rem;
             font-weight: 300;
-            color: #202124;
+            color: #ffffff;
             text-align: center;
-            margin-bottom: 1.5rem;
-            letter-spacing: -2px;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
         }
 
         /* Search Box */
@@ -82,22 +83,21 @@
         .search-box {
             width: 100%;
             display: flex;
-            gap: 0.5rem;
+            gap: 0.75rem;
             align-items: center;
-            background: #ffffff;
-            border: 1px solid #dadce0;
-            border-radius: 24px;
+            background: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
             padding: 0.75rem 1rem;
-            transition: box-shadow 0.2s;
+            transition: border-color 0.2s;
         }
 
         .search-box:hover {
-            box-shadow: 0 1px 6px rgba(32, 33, 36, 0.08);
+            border-color: #4d4d4d;
         }
 
         .search-box:focus-within {
-            box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
-            border-color: transparent;
+            border-color: #5d5d5d;
         }
 
         .search-box input {
@@ -106,25 +106,25 @@
             border: none;
             outline: none;
             font-size: 1rem;
-            color: #202124;
+            color: #e0e0e0;
         }
 
         .search-box input::placeholder {
-            color: #9aa0a6;
+            color: #666666;
         }
 
         .search-btn {
             background: none;
             border: none;
             cursor: pointer;
-            color: #4285f4;
-            font-size: 1.2rem;
+            color: #888888;
+            font-size: 1.1rem;
             padding: 0 0.5rem;
             transition: color 0.2s;
         }
 
         .search-btn:hover {
-            color: #1f71e8;
+            color: #e0e0e0;
         }
 
         /* Buttons */
@@ -135,20 +135,19 @@
         }
 
         .btn {
-            background: #f8f9fa;
-            color: #3c4043;
-            border: 1px solid #dadce0;
+            background: #2d2d2d;
+            color: #e0e0e0;
+            border: 1px solid #3d3d3d;
             padding: 0.75rem 2rem;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .btn:hover {
-            background: #f8f9fa;
-            border-color: #c6c6c6;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            border-color: #4d4d4d;
+            background: #333333;
         }
 
         /* Results Section */
@@ -160,7 +159,7 @@
         }
 
         .results-stats {
-            color: #70757a;
+            color: #888888;
             font-size: 0.9rem;
             margin-bottom: 1.5rem;
         }
@@ -168,24 +167,33 @@
         .results-list {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1.25rem;
         }
 
         /* Result Card */
         .result-item {
+            background: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            padding: 1.25rem;
             display: flex;
             flex-direction: column;
-            gap: 0.3rem;
+            gap: 0.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .result-item:hover {
+            border-color: #4d4d4d;
         }
 
         .result-domain {
-            color: #006621;
+            color: #888888;
             font-size: 0.85rem;
         }
 
         .result-title {
-            color: #1f71e8;
-            font-size: 1.2rem;
+            color: #bb86fc;
+            font-size: 1.1rem;
             font-weight: 500;
             text-decoration: none;
             cursor: pointer;
@@ -194,12 +202,11 @@
         }
 
         .result-title:hover {
-            color: #1551db;
-            text-decoration: underline;
+            color: #d9b3ff;
         }
 
         .result-snippet {
-            color: #545454;
+            color: #b0b0b0;
             font-size: 0.95rem;
             line-height: 1.6;
             max-width: 600px;
@@ -220,64 +227,66 @@
             gap: 0.5rem;
             font-size: 0.85rem;
             font-weight: 500;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
+            background: #333333;
         }
 
         .bias-score.low {
-            background: #e6f4ea;
-            color: #137333;
+            color: #4caf50;
+            border: 1px solid #4caf50;
         }
 
         .bias-score.medium {
-            background: #fef7e0;
-            color: #f9ab00;
+            color: #ffc107;
+            border: 1px solid #ffc107;
         }
 
         .bias-score.high {
-            background: #fce8e6;
-            color: #d33b27;
+            color: #ff5252;
+            border: 1px solid #ff5252;
         }
 
         .bias-indicator {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
         }
 
         .bias-indicator.low {
-            background: #34a853;
+            background: #4caf50;
         }
 
         .bias-indicator.medium {
-            background: #fbbc04;
+            background: #ffc107;
         }
 
         .bias-indicator.high {
-            background: #ea4335;
+            background: #ff5252;
         }
 
         .bias-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
-            margin-top: 0.5rem;
+            margin-top: 0.75rem;
         }
 
         .bias-tag {
             font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.3rem 0.6rem;
             border-radius: 3px;
-            background: #f0f0f0;
-            color: #5f6368;
+            background: #333333;
+            color: #b0b0b0;
+            border: 1px solid #4d4d4d;
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
             padding: 2rem;
-            color: #70757a;
+            color: #888888;
             display: block;
         }
 
@@ -323,14 +332,14 @@
         /* Loading */
         .loading-dots {
             display: inline-flex;
-            gap: 0.25rem;
+            gap: 0.3rem;
         }
 
         .loading-dot {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background: #5f6368;
+            background: #888888;
             animation: bounce 1.4s infinite;
         }
 
@@ -368,7 +377,7 @@
         <h1>Verity</h1>
         <div class="search-container">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search anything to detect bias...">
+                <input type="text" id="searchInput" placeholder="Search to detect bias...">
                 <button class="search-btn" id="searchBtn">🔍</button>
             </div>
             <div class="button-group">
@@ -386,7 +395,7 @@
 
     <!-- Empty State -->
     <div class="empty-state" id="emptyState">
-        <p>Search results with AI-powered bias detection</p>
+        <p>Search anything to detect biases across multiple categories</p>
     </div>
 
     <script>
@@ -394,7 +403,7 @@
             {
                 domain: "sciencenews.com",
                 title: "New Study: Electric Vehicles May Have Hidden Climate Costs",
-                snippet: "Researchers examine the environmental impact of EV manufacturing. The study finds that while EVs are cleaner over their lifetime, production impacts are significant...",
+                snippet: "Researchers examine the environmental impact of EV manufacturing. The study finds that while EVs are cleaner over their lifetime, production impacts are significant.",
                 overallScore: 6,
                 severity: "medium",
                 biases: ["Climate Bias", "Scientific", "Emotional"]
@@ -402,7 +411,7 @@
             {
                 domain: "reuters.com",
                 title: "Understanding Global Temperature Trends: What Science Shows",
-                snippet: "A comprehensive review of peer-reviewed research confirms that global temperatures are rising due to human activities. Major scientific organizations worldwide agree on these findings...",
+                snippet: "A comprehensive review of peer-reviewed research confirms that global temperatures are rising due to human activities. Major scientific organizations worldwide agree.",
                 overallScore: 2,
                 severity: "low",
                 biases: ["Scientific"]
@@ -410,7 +419,7 @@
             {
                 domain: "tech-watch.io",
                 title: "Tesla's CEO Sparks Controversy With Latest Social Media Posts",
-                snippet: "The CEO of the electric vehicle company continues to generate debate with provocative statements. Critics point to a pattern of controversial remarks affecting company reputation...",
+                snippet: "The CEO of the electric vehicle company continues to generate debate with provocative statements. Critics point to a pattern affecting company reputation.",
                 overallScore: 5,
                 severity: "medium",
                 biases: ["Corporate", "Emotional"]
@@ -418,7 +427,7 @@
             {
                 domain: "politicalanalysis.com",
                 title: "Democrats' Climate Plan Branded 'Job Killer' by Opposition",
-                snippet: "A new environmental policy proposal faces intense partisan criticism. One political party characterizes the plan as economically destructive, though analyses on actual job impacts vary...",
+                snippet: "A new environmental policy proposal faces intense partisan criticism. One political party characterizes the plan as economically destructive.",
                 overallScore: 7,
                 severity: "high",
                 biases: ["Political", "Emotional", "Confirmation Bias"]
@@ -431,13 +440,13 @@
 
             return `
                 <div class="result-item">
-                    <div class="result-domain">${result.domain} › search</div>
+                    <div class="result-domain">${result.domain}</div>
                     <a class="result-title">${result.title}</a>
                     <div class="result-snippet">${result.snippet}</div>
                     <div class="bias-container">
                         <div class="bias-score ${biasClass}">
                             <span class="bias-indicator ${biasClass}"></span>
-                            Bias Score: ${result.overallScore}/10
+                            ${result.overallScore}/10
                         </div>
                         <div class="bias-tags">
                             ${biasesList}
@@ -467,12 +476,12 @@
             resultsSection.style.display = 'block';
             emptyState.style.display = 'none';
             resultsList.innerHTML = '<div class="loading-dots"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>';
-            resultsStats.textContent = 'Analyzing results for bias...';
+            resultsStats.textContent = 'Analyzing for bias...';
 
             setTimeout(() => {
                 const html = sampleResults.map(createResultCard).join('');
                 resultsList.innerHTML = html;
-                resultsStats.textContent = `About ${sampleResults.length} results (0.42 seconds)`;
+                resultsStats.textContent = `Results for "${query}" (${sampleResults.length} found)`;
             }, 1500);
         }
 
@@ -482,7 +491,6 @@
             if (e.key === 'Enter') performSearch();
         });
 
-        // Focus search on load
         searchInput.focus();
     </script>
 </body>
