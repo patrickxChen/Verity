@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verity — Search beyond the obvious</title>
+<style>
+  :root {
+    --bg: #F6F8F9;
+    --surface: #FFFFFF;
+    --surface-2: #EEF2F4;
+    --ink: #111A22;
+    --ink-muted: #52616D;
+    --ink-faint: #8494A0;
+    --line: #DCE3E8;
+    --line-strong: #C3CED6;
+    --accent: #0D6E72;
+    --accent-soft: #E0EEEE;
+    /* Opposing positions get two equal-weight hues on purpose. Green-vs-red would tell the
+       reader which side is right, which is the opposite of the point of this product. */
+    --pos-a: #0D6E72;
+    --pos-a-soft: #E0EEEE;
+    --pos-b: #A2572A;
+    --pos-b-soft: #F7EBE0;
+    --flag: #8A5A16;
+    --flag-soft: #FBF1E0;
+    --flag-line: #E4C892;
+    --error: #A32F1B;
+    --error-soft: #FAE9E6;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans: -apple-system, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D1318;
+      --surface: #151D24;
+      --surface-2: #1C262D;
+      --ink: #E9EEF2;
+      --ink-muted: #9EADB8;
+      --ink-faint: #6C7D89;
+      --line: #253038;
+      --line-strong: #35434D;
+      --accent: #4EC3C5;
+      --accent-soft: #123130;
+      --pos-a: #4EC3C5;
+      --pos-a-soft: #123130;
+      --pos-b: #DB9560;
+      --pos-b-soft: #31221A;
+      --flag: #D9A65F;
+      --flag-soft: #2D2416;
+      --flag-line: #53421F;
+      --error: #E58374;
+      --error-soft: #2D1A17;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { max-width: 940px; margin: 0 auto; padding: 0 24px 120px; }
+
+  /* ---------- masthead: hero on load, compact bar after a search ---------- */
+  .masthead {
+    padding: 96px 0 0;
+    text-align: center;
+    transition: padding 0.35s ease;
+  }
+  .masthead.compact { padding: 28px 0 0; text-align: left; }
+
+  .wordmark {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 3.4rem;
+    letter-spacing: -0.03em;
+    margin: 0;
+    line-height: 1;
+    transition: font-size 0.35s ease;
+  }
+  .masthead.compact .wordmark { font-size: 1.5rem; }
+
+  .tagline {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: var(--ink-muted);
+    margin: 12px 0 0;
+  }
+  .masthead.compact .tagline { display: none; }
+
+  .blurb {
+    font-size: 0.9rem;
+    color: var(--ink-faint);
+    max-width: 54ch;
+    margin: 10px auto 0;
+  }
+  .masthead.compact .blurb { display: none; }
+
+  .search-row {
+    display: flex;
+    gap: 10px;
+    margin: 30px auto 0;
+    max-width: 680px;
+  }
+  .masthead.compact .search-row { margin: 14px 0 0; max-width: none; }
+
+  #q {
+    flex: 1;
+    padding: 15px 18px;
+    font-size: 1rem;
+    font-family: var(--sans);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  #q:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+
+  #go {
+    padding: 15px 26px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: var(--sans);
+    border: none;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--bg);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  #go:hover { opacity: 0.9; }
+  #go:disabled { opacity: 0.45; cursor: default; }
+
+  .examples {
+    margin: 16px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 680px;
+  }
+  .masthead.compact .examples { display: none; }
+  .chip {
+    font-size: 0.82rem;
+    padding: 7px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink-muted);
+    cursor: pointer;
+    font-family: var(--sans);
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- research progress ---------- */
+  .progress {
+    margin-top: 30px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+    padding: 18px 20px;
+    display: none;
+  }
+  .progress.visible { display: block; }
+  .progress-head {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.9rem; font-weight: 600; margin-bottom: 12px;
+  }
+  .spinner {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--line); border-top-color: var(--accent);
+    animation: spin 0.8s linear infinite; flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .log { margin: 0; padding: 0; list-style: none; font-size: 0.83rem; }
+  .log li { color: var(--ink-faint); padding: 2.5px 0; }
+  .log li:last-child { color: var(--ink); font-weight: 600; }
+
+  .error-box {
+    margin-top: 24px; padding: 15px 18px;
+    border: 1px solid var(--error); background: var(--error-soft);
+    color: var(--error); border-radius: 12px; font-size: 0.9rem; display: none;
+  }
+  .error-box.visible { display: block; }
+
+  /* ---------- results ---------- */
+  .results { display: none; margin-top: 40px; }
+  .results.visible { display: block; }
+
+  .section { margin-bottom: 44px; }
+  .section-label {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.13em;
+    font-weight: 700; color: var(--ink-faint);
+    padding-bottom: 9px; border-bottom: 1px solid var(--line); margin-bottom: 18px;
+  }
+  .section-label.flagged { color: var(--flag); border-bottom-color: var(--flag-line); }
+
+  .answer { font-family: var(--serif); font-size: 1.1rem; line-height: 1.65; }
+  .answer p { margin: 0 0 16px; }
+
+  .cite {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 0.68rem;
+    font-weight: 700;
+    min-width: 17px;
+    height: 17px;
+    line-height: 15px;
+    text-align: center;
+    border-radius: 4px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    text-decoration: none;
+    vertical-align: super;
+    margin: 0 1px;
+    padding: 0 3px;
+  }
+  .cite:hover { background: var(--accent); color: var(--surface); }
+
+  .verdict {
+    margin-top: 8px;
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    font-family: var(--serif);
+    font-size: 1rem;
+  }
+
+  /* ---------- evidence ---------- */
+  .claim {
+    border: 1px solid var(--line); border-radius: 12px;
+    background: var(--surface); padding: 16px 18px; margin-bottom: 12px;
+  }
+  .claim-text { font-family: var(--serif); font-size: 1.02rem; margin-bottom: 10px; }
+  .strength {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em;
+    font-weight: 700; padding: 3px 9px; border-radius: 5px; margin-bottom: 8px;
+  }
+  .strength.Strong { background: var(--accent); color: var(--surface); }
+  .strength.Moderate { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+  .strength.Limited { background: var(--surface-2); color: var(--ink-muted); border: 1px solid var(--line-strong); }
+  .strength.Conflicting { background: var(--pos-b-soft); color: var(--pos-b); border: 1px solid var(--pos-b); }
+  .strength.Insufficient { background: transparent; color: var(--ink-faint); border: 1px dashed var(--line-strong); }
+  .strength-why { font-size: 0.82rem; color: var(--ink-muted); margin-bottom: 10px; }
+
+  .ev-row { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; }
+  .ev-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .ev-label { color: var(--ink-faint); text-transform: uppercase; font-size: 0.66rem; letter-spacing: 0.07em; font-weight: 700; }
+  .caveats { margin: 10px 0 0; padding-left: 18px; font-size: 0.84rem; color: var(--ink-muted); }
+
+  /* ---------- perspectives ---------- */
+  .persp {
+    border: 1px solid var(--line); border-left: 3px solid var(--line-strong);
+    border-radius: 0 12px 12px 0; background: var(--surface);
+    padding: 16px 18px; margin-bottom: 12px;
+  }
+  .persp:nth-child(odd) { border-left-color: var(--pos-a); }
+  .persp:nth-child(even) { border-left-color: var(--pos-b); }
+  .persp-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 7px; }
+  .persp-arg { font-family: var(--serif); font-size: 1rem; margin-bottom: 8px; }
+  .kv { font-size: 0.84rem; color: var(--ink-muted); margin-bottom: 5px; }
+  .kv b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- missing perspectives (the headline feature) ---------- */
+  .missing-panel {
+    border: 1px solid var(--flag-line); border-radius: 14px;
+    background: var(--flag-soft); padding: 20px 22px;
+  }
+  .missing-head { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
+  .missing-sub { font-size: 0.9rem; color: var(--ink-muted); margin-bottom: 18px; }
+
+  .distbar {
+    display: flex; height: 12px; border-radius: 999px; overflow: hidden;
+    border: 1px solid var(--line-strong); margin-bottom: 8px; background: var(--surface);
+  }
+  .distbar span { display: block; }
+  .dist-Supportive { background: var(--pos-a); }
+  .dist-Critical { background: var(--pos-b); }
+  .dist-Mixed { background: var(--ink-faint); }
+  .dist-Neutral { background: var(--line-strong); }
+  .dist-Unclear { background: var(--surface-2); }
+  .dist-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.76rem; color: var(--ink-muted); margin-bottom: 18px; }
+  .dist-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+
+  .gap-list { margin: 0 0 18px; padding-left: 20px; font-size: 0.88rem; color: var(--ink); }
+  .gap-list li { margin-bottom: 4px; }
+
+  .missing-item {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
+  }
+  .missing-topic { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+
+  .hidden-extra { display: none; }
+  .hidden-extra.shown { display: block; }
+  .reveal-btn {
+    margin-top: 6px; padding: 11px 18px; font-size: 0.87rem; font-weight: 600;
+    font-family: var(--sans); border-radius: 10px; cursor: pointer;
+    background: var(--flag); color: var(--surface); border: none;
+  }
+  .reveal-btn:hover { opacity: 0.9; }
+
+  /* ---------- source independence ---------- */
+  .indep-summary {
+    font-family: var(--serif); font-size: 1.02rem;
+    padding: 16px 18px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 12px; margin-bottom: 16px;
+  }
+  .funnel { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .funnel-step {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 16px; text-align: center; min-width: 118px;
+  }
+  .funnel-n { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .funnel-l { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); font-weight: 700; }
+  .funnel-arrow { color: var(--ink-faint); font-size: 1.1rem; }
+
+  .cluster {
+    border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+    padding: 14px 16px; margin-bottom: 10px;
+  }
+  .cluster-root { font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; word-break: break-all; }
+  .cluster-kind { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); font-weight: 700; margin-bottom: 10px; }
+  .cluster-members { margin: 0; padding: 0; list-style: none; }
+  .cluster-members li {
+    font-size: 0.85rem; color: var(--ink-muted);
+    padding: 4px 0 4px 18px; border-left: 2px solid var(--line-strong); margin-left: 6px;
+    position: relative;
+  }
+  .cluster-members li::before {
+    content: ""; position: absolute; left: 0; top: 50%;
+    width: 12px; height: 2px; background: var(--line-strong);
+  }
+
+  /* ---------- sources ---------- */
+  .source {
+    border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+    padding: 16px 18px; margin-bottom: 10px; scroll-margin-top: 20px;
+  }
+  .source:target { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .source-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .source-n {
+    font-size: 0.7rem; font-weight: 700; min-width: 20px; height: 20px; line-height: 18px;
+    text-align: center; border-radius: 5px; background: var(--accent-soft);
+    color: var(--accent); border: 1px solid var(--accent);
+  }
+  .source-domain { font-weight: 700; font-size: 0.92rem; color: var(--ink); text-decoration: none; }
+  .source-domain:hover { color: var(--accent); text-decoration: underline; }
+  .badge {
+    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+    padding: 2px 8px; border-radius: 4px; border: 1px solid var(--line-strong);
+    color: var(--ink-muted); background: var(--surface-2);
+  }
+  .badge.counter { border-color: var(--flag-line); color: var(--flag); background: var(--flag-soft); }
+  .badge.primary { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .source-title { font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 7px; }
+  .source-summary { font-family: var(--serif); font-size: 0.97rem; margin-bottom: 9px; }
+  .stake { font-size: 0.82rem; color: var(--ink-muted); padding: 8px 12px; border-radius: 8px; background: var(--surface-2); }
+  .stake.flagged {
+    background: var(--flag-soft); color: var(--flag);
+    border-left: 3px solid var(--flag); font-weight: 600;
+  }
+  .stake-label {
+    text-transform: uppercase; font-size: 0.64rem; letter-spacing: 0.08em;
+    font-weight: 700; display: block; margin-bottom: 2px; opacity: 0.85;
+  }
+
+  /* ---------- disclosure panels ---------- */
+  details {
+    border: 1px solid var(--line); border-radius: 12px;
+    background: var(--surface); padding: 0 18px; margin-bottom: 10px;
+  }
+  details[open] { padding-bottom: 16px; }
+  summary {
+    cursor: pointer; padding: 14px 0; font-size: 0.88rem; font-weight: 600;
+    list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "+ "; color: var(--accent); font-weight: 700; }
+  details[open] summary::before { content: "\2212 "; }
+  .why-col { margin: 0; padding-left: 20px; font-size: 0.87rem; }
+  .why-col li { margin-bottom: 5px; }
+  .why-head { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--ink-faint); margin: 10px 0 6px; }
+  .statgrid { display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.84rem; }
+  .statgrid div { background: var(--surface-2); border-radius: 8px; padding: 8px 12px; }
+  .statgrid b { font-variant-numeric: tabular-nums; }
+
+  .footnote {
+    margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line);
+    font-size: 0.8rem; color: var(--ink-faint); line-height: 1.65;
+  }
+
+  @media (max-width: 640px) {
+    .masthead { padding-top: 56px; }
+    .wordmark { font-size: 2.6rem; }
+    .search-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <header class="masthead" id="masthead">
+      <h1 class="wordmark">Verity</h1>
+      <p class="tagline">Search beyond the obvious.</p>
+      <p class="blurb">
+        Verity investigates a question across multiple search engines, reads the sources in
+        full, then goes looking for the credible evidence those results left out.
+      </p>
+
+      <div class="search-row">
+        <input id="q" type="text" autocomplete="off" placeholder="Ask a question...">
+        <button id="go" type="button">Search</button>
+      </div>
+
+      <div class="examples">
+        <button class="chip" type="button">Is nuclear power safe?</button>
+        <button class="chip" type="button">Are EVs actually better for the environment?</button>
+        <button class="chip" type="button">Does social media improve mental health?</button>
+      </div>
+    </header>
+
+    <div class="progress" id="progress">
+      <div class="progress-head"><div class="spinner"></div><span id="progress-title">Researching...</span></div>
+      <ul class="log" id="log"></ul>
+    </div>
+
+    <div class="error-box" id="error"></div>
+
+    <main class="results" id="results"></main>
+  </div>
+
+<script>
+  const qEl = document.getElementById("q");
+  const goEl = document.getElementById("go");
+  const mastheadEl = document.getElementById("masthead");
+  const progressEl = document.getElementById("progress");
+  const progressTitle = document.getElementById("progress-title");
+  const logEl = document.getElementById("log");
+  const errorEl = document.getElementById("error");
+  const resultsEl = document.getElementById("results");
+
+  let stream = null;
+
+  document.querySelectorAll(".chip").forEach(chip => {
+    chip.addEventListener("click", () => { qEl.value = chip.textContent.trim(); run(); });
+  });
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // Turns [1] and [2][5] in the model's prose into links down to the matching source card.
+  function linkCitations(text, maxN) {
+    return esc(text).replace(/\[(\d+)\]/g, (whole, n) => {
+      const num = parseInt(n, 10);
+      if (!num || num > maxN) return "";
+      return `<a class="cite" href="#src-${num}">${num}</a>`;
+    });
+  }
+
+  function paragraphs(text, maxN) {
+    return String(text || "").split(/\n{2,}/).filter(p => p.trim())
+      .map(p => `<p>${linkCitations(p.trim(), maxN)}</p>`).join("");
+  }
+
+  function refChips(nums) {
+    if (!nums || !nums.length) return '<span class="kv">none</span>';
+    return nums.map(n => `<a class="cite" href="#src-${n}">${n}</a>`).join("");
+  }
+
+  function setBusy(busy) {
+    goEl.disabled = busy; qEl.disabled = busy;
+    goEl.textContent = busy ? "Researching..." : "Search";
+    progressEl.classList.toggle("visible", busy);
+  }
+
+  function addLog(message) {
+    const li = document.createElement("li");
+    li.textContent = message;
+    logEl.appendChild(li);
+    while (logEl.children.length > 9) logEl.removeChild(logEl.firstChild);
+  }
+
+  function renderDistribution(dist) {
+    const pct = (dist && dist.percent) || {};
+    const keys = Object.keys(pct);
+    if (!keys.length) return "";
+    const bar = keys.map(k => `<span class="dist-${k}" style="width:${pct[k]}%"></span>`).join("");
+    const legend = keys.map(k =>
+      `<span><i class="dist-${k}"></i>${esc(k)} ${pct[k]}%</span>`).join("");
+    return `<div class="distbar">${bar}</div><div class="dist-legend">${legend}</div>`;
+  }
+
+  function renderMissing(d, maxN) {
+    const items = (d.missing || []).map(m => `
+      <div class="missing-item">
+        <div class="missing-topic">${esc(m.topic)}</div>
+        <div class="kv"><b>Why it matters:</b> ${esc(m.why_it_matters)}</div>
+        <div class="kv"><b>What Verity found:</b> ${esc(m.evidence)}</div>
+        <div class="ev-group"><span class="ev-label">Sources</span>${refChips(m.sources)}</div>
+      </div>`);
+
+    const firstTwo = items.slice(0, 2).join("");
+    const rest = items.slice(2).join("");
+    const gaps = (d.counter_gaps || []).map(g => `<li>${esc(g)}</li>`).join("");
+
+    const revealBtn = rest
+      ? `<button class="reveal-btn" id="reveal-missing" type="button">Explore all missing perspectives</button>
+         <div class="hidden-extra" id="missing-extra">${rest}</div>`
+      : "";
+
+    return `
+      <div class="section">
+        <div class="section-label flagged">What you might be missing</div>
+        <div class="missing-panel">
+          <div class="missing-head">You may be seeing an incomplete picture</div>
+          <div class="missing-sub">
+            Verity's first pass of results leaned <b>${esc(d.initial_lean_text || "unknown")}</b>.
+            It then ran ${(d.counter_queries || []).length} further searches aimed specifically at
+            credible evidence that could qualify or overturn that conclusion.
+          </div>
+          ${renderDistribution(d.initial_distribution)}
+          ${gaps ? `<div class="why-head">Gaps it went looking for</div><ul class="gap-list">${gaps}</ul>` : ""}
+          ${firstTwo}
+          ${revealBtn}
+          <p class="kv" style="margin-top:14px">
+            This does not mean both sides are equally correct. It means these are relevant
+            considerations the dominant results underplayed.
+          </p>
+        </div>
+      </div>`;
+  }
+
+  function renderIndependence(indep) {
+    if (!indep) return "";
+    const clusters = (indep.clusters || []).map(c => `
+      <div class="cluster">
+        <div class="cluster-kind">Shared ${esc(c.upstream_kind)}${c.upstream_was_read ? " — also read directly by Verity" : ""}</div>
+        <div class="cluster-root">${esc(c.upstream)}</div>
+        <ul class="cluster-members">
+          ${(c.members || []).map(m => `<li>${esc(m)}</li>`).join("")}
+        </ul>
+      </div>`).join("");
+
+    const independent = (indep.independent || []).length
+      ? `<div class="cluster">
+           <div class="cluster-kind">No shared upstream detected</div>
+           <ul class="cluster-members">
+             ${indep.independent.map(m => `<li>${esc(m)}</li>`).join("")}
+           </ul>
+         </div>`
+      : "";
+
+    return `
+      <div class="section">
+        <div class="section-label">Are these sources independent?</div>
+        <div class="funnel">
+          <div class="funnel-step">
+            <div class="funnel-n">${indep.total_sources}</div>
+            <div class="funnel-l">sources read</div>
+          </div>
+          <div class="funnel-arrow">&rarr;</div>
+          <div class="funnel-step">
+            <div class="funnel-n">${(indep.clusters || []).length}</div>
+            <div class="funnel-l">shared upstreams</div>
+          </div>
+          <div class="funnel-arrow">&rarr;</div>
+          <div class="funnel-step">
+            <div class="funnel-n">${indep.distinct_clusters}</div>
+            <div class="funnel-l">distinct lines of evidence</div>
+          </div>
+        </div>
+        <div class="indep-summary">${esc(indep.summary)}</div>
+        ${clusters}${independent}
+        <p class="kv" style="margin-top:12px">
+          Computed from links these pages actually published — not inferred by a model. Click
+          any source to check it.
+        </p>
+      </div>`;
+  }
+
+  function renderSources(sources) {
+    const cards = (sources || []).map(s => {
+      const hasStake = s.interest && !/^no obvious stake|^unknown/i.test(s.interest.trim());
+      const isPrimary = /^primary/i.test(s.primary_or_secondary || "");
+      return `
+        <div class="source" id="src-${s.n}">
+          <div class="source-top">
+            <span class="source-n">${s.n}</span>
+            <a class="source-domain" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.domain)}</a>
+            <span class="badge">${esc(s.type)}</span>
+            ${isPrimary ? '<span class="badge primary">Primary</span>' : ""}
+            <span class="badge">${esc(s.stance)}</span>
+            ${s.from_counter_search ? '<span class="badge counter">Found by counter-search</span>' : ""}
+          </div>
+          <div class="source-title">${esc(s.title)}</div>
+          ${s.summary ? `<div class="source-summary">${esc(s.summary)}</div>` : ""}
+          ${s.interest ? `
+            <div class="stake ${hasStake ? "flagged" : ""}">
+              <span class="stake-label">${hasStake ? "Disclosed interest" : "Interest"}</span>
+              ${esc(s.interest)}
+            </div>` : ""}
+        </div>`;
+    }).join("");
+    return `<div class="section"><div class="section-label">Sources</div>${cards}</div>`;
+  }
+
+  function renderResult(d) {
+    const maxN = (d.sources || []).length;
+
+    const claims = (d.claims || []).map(c => `
+      <div class="claim">
+        <div class="strength ${esc(c.strength)}">${esc(c.strength)}</div>
+        <div class="claim-text">${esc(c.claim)}</div>
+        ${c.strength_reason ? `<div class="strength-why">${esc(c.strength_reason)}</div>` : ""}
+        <div class="ev-row">
+          <div class="ev-group"><span class="ev-label">Supporting</span>${refChips(c.supporting)}</div>
+          <div class="ev-group"><span class="ev-label">Challenging</span>${refChips(c.challenging)}</div>
+        </div>
+        ${(c.caveats || []).length
+          ? `<ul class="caveats">${c.caveats.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+      </div>`).join("");
+
+    const perspectives = (d.perspectives || []).map(p => `
+      <div class="persp">
+        <div class="persp-name">${esc(p.name)}</div>
+        <div class="persp-arg">${esc(p.argument)}</div>
+        ${p.evidence ? `<div class="kv"><b>Based on:</b> ${esc(p.evidence)}</div>` : ""}
+        ${p.caveat ? `<div class="kv"><b>Caveat:</b> ${esc(p.caveat)}</div>` : ""}
+        <div class="ev-group"><span class="ev-label">Sources</span>${refChips(p.sources)}</div>
+      </div>`).join("");
+
+    const uncertainties = (d.uncertainties || []).length
+      ? `<div class="section">
+           <div class="section-label">What remains uncertain</div>
+           <ul class="gap-list">${d.uncertainties.map(u => `<li>${esc(u)}</li>`).join("")}</ul>
+         </div>`
+      : "";
+
+    const why = d.why || {};
+    const st = d.stats || {};
+
+    resultsEl.innerHTML = `
+      <div class="section">
+        <div class="section-label">Verity's answer</div>
+        <div class="answer">${paragraphs(d.answer, maxN)}</div>
+        ${d.verdict_note ? `<div class="verdict">${esc(d.verdict_note)}</div>` : ""}
+      </div>
+
+      ${claims ? `<div class="section"><div class="section-label">What the evidence says</div>${claims}</div>` : ""}
+      ${perspectives ? `<div class="section"><div class="section-label">Different perspectives</div>${perspectives}</div>` : ""}
+
+      ${renderMissing(d, maxN)}
+      ${renderIndependence(d.independence)}
+      ${uncertainties}
+
+      <div class="section">
+        <div class="section-label">Behind this answer</div>
+        <details>
+          <summary>Why did Verity conclude this?</summary>
+          ${(why.supports || []).length ? `<div class="why-head">Reasons to trust it</div>
+            <ul class="why-col">${why.supports.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+          ${(why.cautions || []).length ? `<div class="why-head">Reasons for caution</div>
+            <ul class="why-col">${why.cautions.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+        </details>
+        <details>
+          <summary>Research performed</summary>
+          <div class="statgrid">
+            <div>Dimensions investigated <b>${st.dimensions || 0}</b></div>
+            <div>Initial searches <b>${st.initial_searches || 0}</b></div>
+            <div>Counter-searches <b>${st.counter_searches || 0}</b></div>
+            <div>Sources seen <b>${st.sources_seen || 0}</b></div>
+            <div>Sources read in full <b>${st.sources_read || 0}</b></div>
+            <div>Run time <b>${st.seconds || 0}s</b></div>
+          </div>
+          ${(d.dimensions || []).length ? `<div class="why-head">Dimensions</div>
+            <ul class="why-col">${d.dimensions.map(x =>
+              `<li><b>${esc(x.name)}</b> — searched: ${esc(x.query)}</li>`).join("")}</ul>` : ""}
+          ${(d.counter_queries || []).length ? `<div class="why-head">Counter-searches run</div>
+            <ul class="why-col">${d.counter_queries.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+        </details>
+      </div>
+
+      ${renderSources(d.sources)}
+
+      <p class="footnote">
+        Verity's analysis is generated by AI and may contain errors. Source labels, stances and
+        evidence ratings are judgements, not facts — every source links out so you can check the
+        original. Verity does not claim to be unbiased; it claims to show you what it looked at,
+        what it found, and what it went looking for on purpose.
+      </p>`;
+
+    const revealBtn = document.getElementById("reveal-missing");
+    if (revealBtn) {
+      revealBtn.addEventListener("click", () => {
+        document.getElementById("missing-extra").classList.add("shown");
+        revealBtn.remove();
+      });
+    }
+
+    resultsEl.classList.add("visible");
+  }
+
+  function run() {
+    const question = qEl.value.trim();
+    if (!question) return;
+
+    if (stream) stream.close();
+    errorEl.classList.remove("visible");
+    resultsEl.classList.remove("visible");
+    resultsEl.innerHTML = "";
+    logEl.innerHTML = "";
+    mastheadEl.classList.add("compact");
+    progressTitle.textContent = `Investigating: ${question}`;
+    setBusy(true);
+    addLog("Planning the research...");
+
+    stream = new EventSource("/api/search?q=" + encodeURIComponent(question));
+    stream.addEventListener("status", e => addLog(JSON.parse(e.data)));
+    stream.addEventListener("result", e => { renderResult(JSON.parse(e.data)); });
+    stream.addEventListener("error_msg", e => {
+      errorEl.textContent = JSON.parse(e.data);
+      errorEl.classList.add("visible");
+    });
+    stream.addEventListener("done", () => {
+      setBusy(false);
+      if (stream) { stream.close(); stream = null; }
+    });
+    stream.onerror = () => {
+      if (!resultsEl.classList.contains("visible")) {
+        errorEl.textContent = "Lost connection to the server. Is app.py still running?";
+        errorEl.classList.add("visible");
+      }
+      setBusy(false);
+      if (stream) { stream.close(); stream = null; }
+    };
+  }
+
+  goEl.addEventListener("click", run);
+  qEl.addEventListener("keydown", e => { if (e.key === "Enter") run(); });
+</script>
+</body>
+</html>
