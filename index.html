@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verity - AI Bias Detection Search Engine</title>
+    <title>Verity - Bias Detection Search</title>
     <style>
         * {
             margin: 0;
@@ -11,74 +11,25 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #ec4899;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --dark: #1f2937;
-            --light: #f9fafb;
-            --border: #e5e7eb;
-
-            --bias-political: #ef4444;
-            --bias-corporate: #f97316;
-            --bias-scientific: #eab308;
-            --bias-climate: #06b6d4;
-            --bias-emotional: #ec4899;
-            --bias-confirmation: #8b5cf6;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-            color: #f3f4f6;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #202124;
         }
 
         /* Navbar */
         .navbar {
-            background: rgba(17, 24, 39, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(229, 231, 235, 0.1);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #dadce0;
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
             font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #6366f1, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #6366f1, #ec4899);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
+            font-weight: 500;
+            color: #4285f4;
         }
 
         .nav-links {
@@ -88,111 +39,130 @@
         }
 
         .nav-links a {
-            color: #9ca3af;
+            color: #5f6368;
             text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.3s;
+            font-size: 0.9rem;
+            transition: color 0.2s;
         }
 
         .nav-links a:hover {
-            color: #6366f1;
+            color: #202124;
         }
 
         /* Hero Section */
         .hero {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 1.5rem 3rem;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 40vh;
+            padding: 2rem;
         }
 
         .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #6366f1, #ec4899, #06b6d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.2;
+            font-size: 5rem;
+            font-weight: 300;
+            color: #202124;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            letter-spacing: -2px;
         }
 
-        .hero p {
-            font-size: 1.25rem;
-            color: #9ca3af;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Search Section */
+        /* Search Box */
         .search-container {
-            max-width: 1200px;
+            width: 100%;
+            max-width: 600px;
             margin: 0 auto;
-            padding: 0 1.5rem 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
         }
 
         .search-box {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
-            border: 2px solid rgba(99, 102, 241, 0.3);
-            border-radius: 12px;
-            padding: 1rem;
+            width: 100%;
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
             align-items: center;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            background: #ffffff;
+            border: 1px solid #dadce0;
+            border-radius: 24px;
+            padding: 0.75rem 1rem;
+            transition: box-shadow 0.2s;
+        }
+
+        .search-box:hover {
+            box-shadow: 0 1px 6px rgba(32, 33, 36, 0.08);
         }
 
         .search-box:focus-within {
-            border-color: #6366f1;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(236, 72, 153, 0.15));
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+            border-color: transparent;
         }
 
         .search-box input {
             flex: 1;
             background: transparent;
             border: none;
-            color: white;
-            font-size: 1.1rem;
             outline: none;
+            font-size: 1rem;
+            color: #202124;
         }
 
         .search-box input::placeholder {
-            color: #6b7280;
+            color: #9aa0a6;
         }
 
         .search-btn {
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-            color: white;
+            background: none;
             border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
+            color: #4285f4;
+            font-size: 1.2rem;
+            padding: 0 0.5rem;
+            transition: color 0.2s;
         }
 
         .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+            color: #1f71e8;
         }
 
-        .search-btn:active {
-            transform: translateY(0);
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn {
+            background: #f8f9fa;
+            color: #3c4043;
+            border: 1px solid #dadce0;
+            padding: 0.75rem 2rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #f8f9fa;
+            border-color: #c6c6c6;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         }
 
         /* Results Section */
-        .results-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem 3rem;
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
+        .results-section {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: none;
+        }
+
+        .results-stats {
+            color: #70757a;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
         }
 
         .results-list {
@@ -202,449 +172,276 @@
         }
 
         /* Result Card */
-        .result-card {
-            background: linear-gradient(135deg, rgba(55, 65, 81, 0.4), rgba(31, 41, 55, 0.4));
-            border: 1px solid rgba(229, 231, 235, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-        }
-
-        .result-card:hover {
-            border-color: rgba(99, 102, 241, 0.5);
-            transform: translateY(-4px);
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.05));
-        }
-
-        .result-meta {
+        .result-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
+            flex-direction: column;
+            gap: 0.3rem;
         }
 
         .result-domain {
-            color: #6366f1;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .bias-score {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(239, 68, 68, 0.2);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-
-        .bias-score.low {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-        }
-
-        .bias-score.medium {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-        }
-
-        .bias-score.high {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
+            color: #006621;
+            font-size: 0.85rem;
         }
 
         .result-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #f3f4f6;
+            color: #1f71e8;
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
             line-height: 1.4;
         }
 
+        .result-title:hover {
+            color: #1551db;
+            text-decoration: underline;
+        }
+
         .result-snippet {
-            color: #9ca3af;
+            color: #545454;
             font-size: 0.95rem;
-            margin-bottom: 1rem;
             line-height: 1.6;
+            max-width: 600px;
+        }
+
+        /* Bias Indicators */
+        .bias-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .bias-score {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+        }
+
+        .bias-score.low {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .bias-score.medium {
+            background: #fef7e0;
+            color: #f9ab00;
+        }
+
+        .bias-score.high {
+            background: #fce8e6;
+            color: #d33b27;
+        }
+
+        .bias-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .bias-indicator.low {
+            background: #34a853;
+        }
+
+        .bias-indicator.medium {
+            background: #fbbc04;
+        }
+
+        .bias-indicator.high {
+            background: #ea4335;
         }
 
         .bias-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
+            margin-top: 0.5rem;
         }
 
         .bias-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            background: #f0f0f0;
+            color: #5f6368;
         }
 
-        .bias-tag.political {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #70757a;
+            display: block;
         }
 
-        .bias-tag.corporate {
-            background: rgba(249, 115, 22, 0.2);
-            color: #fed7aa;
-        }
-
-        .bias-tag.scientific {
-            background: rgba(234, 179, 8, 0.2);
-            color: #fde047;
-        }
-
-        .bias-tag.climate {
-            background: rgba(6, 182, 212, 0.2);
-            color: #a5f3fc;
-        }
-
-        .bias-tag.emotional {
-            background: rgba(236, 72, 153, 0.2);
-            color: #fbcfe8;
-        }
-
-        .bias-tag.confirmation {
-            background: rgba(139, 92, 246, 0.2);
-            color: #ddd6fe;
-        }
-
-        /* Sidebar Charts */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .chart-card {
-            background: linear-gradient(135deg, rgba(55, 65, 81, 0.4), rgba(31, 41, 55, 0.4));
-            border: 1px solid rgba(229, 231, 235, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .chart-title {
+        .empty-state p {
             font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #f3f4f6;
-        }
-
-        .radar-chart {
-            width: 100%;
-            height: 250px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        /* Radar-like visualization with SVG */
-        .radar-svg {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 10px 30px rgba(99, 102, 241, 0.1));
-        }
-
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(229, 231, 235, 0.05);
-        }
-
-        .stat-item:last-child {
-            border-bottom: none;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: #9ca3af;
-        }
-
-        .stat-bar {
-            width: 120px;
-            height: 6px;
-            background: rgba(229, 231, 235, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .stat-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.5s ease;
         }
 
         /* Responsive */
-        @media (max-width: 1024px) {
-            .results-container {
-                grid-template-columns: 1fr;
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .navbar {
+                padding: 0.75rem 1rem;
+                flex-direction: column;
+                gap: 1rem;
             }
 
             .nav-links {
                 gap: 1rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
+                font-size: 0.85rem;
             }
 
-            .hero p {
-                font-size: 1rem;
+            .search-container {
+                padding: 0 1rem;
             }
 
-            .search-box {
+            .results-section {
+                padding: 0 1rem;
+            }
+
+            .button-group {
                 flex-direction: column;
-            }
-
-            .search-box input {
                 width: 100%;
             }
 
-            .search-btn {
+            .btn {
                 width: 100%;
             }
-
-            .hero {
-                padding: 2rem 1.5rem 1.5rem;
-            }
         }
 
-        /* Loading state */
-        .loading {
-            text-align: center;
-            padding: 3rem 1.5rem;
+        /* Loading */
+        .loading-dots {
+            display: inline-flex;
+            gap: 0.25rem;
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 1rem;
-            border: 3px solid rgba(99, 102, 241, 0.2);
-            border-top: 3px solid #6366f1;
+        .loading-dot {
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            background: #5f6368;
+            animation: bounce 1.4s infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
         }
 
-        .loading-text {
-            color: #9ca3af;
-            font-size: 1rem;
+        .loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
         }
 
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 1.5rem;
-            color: #9ca3af;
-        }
-
-        .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
+        @keyframes bounce {
+            0%, 60%, 100% {
+                opacity: 0.3;
+            }
+            30% {
+                opacity: 1;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="navbar-container">
-            <div class="logo">
-                <div class="logo-icon">✓</div>
-                Verity
-            </div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </div>
+        <div class="logo">Verity</div>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#help">Help</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
     </nav>
 
     <!-- Hero Section -->
     <div class="hero">
-        <h1>See Through the Bias</h1>
-        <p>AI-powered search engine that detects political, scientific, and emotional biases in real-time</p>
-    </div>
-
-    <!-- Search Section -->
-    <div class="search-container">
-        <div class="search-box">
-            <input type="text" placeholder="Search anything... (e.g., 'climate change', 'Tesla', 'vaccines')" id="searchInput">
-            <button class="search-btn" id="searchBtn">Search</button>
-        </div>
-    </div>
-
-    <!-- Results Section -->
-    <div id="resultsSection" style="display: none;">
-        <div class="results-container">
-            <div class="results-list" id="resultsList"></div>
-            <div class="sidebar">
-                <div class="chart-card">
-                    <div class="chart-title">Bias Breakdown</div>
-                    <svg class="radar-svg" viewBox="0 0 300 250" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Grid circles -->
-                        <circle cx="150" cy="125" r="30" fill="none" stroke="rgba(229,231,235,0.1)" stroke-width="1"/>
-                        <circle cx="150" cy="125" r="60" fill="none" stroke="rgba(229,231,235,0.1)" stroke-width="1"/>
-                        <circle cx="150" cy="125" r="90" fill="none" stroke="rgba(229,231,235,0.1)" stroke-width="1"/>
-
-                        <!-- Axes -->
-                        <line x1="150" y1="125" x2="150" y2="15" stroke="rgba(99,102,241,0.3)" stroke-width="1"/>
-                        <line x1="150" y1="125" x2="225" y2="60" stroke="rgba(99,102,241,0.3)" stroke-width="1"/>
-                        <line x1="150" y1="125" x2="225" y2="190" stroke="rgba(99,102,241,0.3)" stroke-width="1"/>
-                        <line x1="150" y1="125" x2="150" y2="235" stroke="rgba(99,102,241,0.3)" stroke-width="1"/>
-                        <line x1="150" y1="125" x2="75" y2="190" stroke="rgba(99,102,241,0.3)" stroke-width="1"/>
-                        <line x1="150" y1="125" x2="75" y2="60" stroke="rgba(99,102,241,0.3)" stroke-width="1"/>
-
-                        <!-- Data polygon -->
-                        <polygon points="150,45 210,80 220,150 150,200 80,150 90,80" fill="rgba(99,102,241,0.2)" stroke="#6366f1" stroke-width="2"/>
-
-                        <!-- Labels -->
-                        <text x="150" y="30" text-anchor="middle" fill="#9ca3af" font-size="11">Political</text>
-                        <text x="230" y="70" text-anchor="start" fill="#9ca3af" font-size="11">Corporate</text>
-                        <text x="235" y="160" text-anchor="start" fill="#9ca3af" font-size="11">Climate</text>
-                        <text x="150" y="250" text-anchor="middle" fill="#9ca3af" font-size="11">Confirmation</text>
-                        <text x="50" y="160" text-anchor="end" fill="#9ca3af" font-size="11">Emotional</text>
-                        <text x="55" y="70" text-anchor="end" fill="#9ca3af" font-size="11">Scientific</text>
-                    </svg>
-                </div>
-
-                <div class="chart-card">
-                    <div class="chart-title">Category Scores</div>
-                    <div class="stat-item">
-                        <span class="stat-label">Political</span>
-                        <div class="stat-bar">
-                            <div class="stat-fill" style="background: #ef4444; width: 65%;"></div>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Corporate</span>
-                        <div class="stat-bar">
-                            <div class="stat-fill" style="background: #f97316; width: 45%;"></div>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Scientific</span>
-                        <div class="stat-bar">
-                            <div class="stat-fill" style="background: #eab308; width: 72%;"></div>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Climate</span>
-                        <div class="stat-bar">
-                            <div class="stat-fill" style="background: #06b6d4; width: 58%;"></div>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Emotional</span>
-                        <div class="stat-bar">
-                            <div class="stat-fill" style="background: #ec4899; width: 68%;"></div>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Confirmation</span>
-                        <div class="stat-bar">
-                            <div class="stat-fill" style="background: #8b5cf6; width: 52%;"></div>
-                        </div>
-                    </div>
-                </div>
+        <h1>Verity</h1>
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search anything to detect bias...">
+                <button class="search-btn" id="searchBtn">🔍</button>
+            </div>
+            <div class="button-group">
+                <button class="btn" id="searchBtn2">Detect Bias</button>
+                <button class="btn">I'm Feeling Lucky</button>
             </div>
         </div>
     </div>
 
+    <!-- Results Section -->
+    <div class="results-section" id="resultsSection">
+        <div class="results-stats" id="resultsStats"></div>
+        <div class="results-list" id="resultsList"></div>
+    </div>
+
     <!-- Empty State -->
-    <div id="emptyState" class="empty-state">
-        <div class="empty-icon">🔍</div>
-        <p>Enter a search query to detect biases across 6+ categories</p>
+    <div class="empty-state" id="emptyState">
+        <p>Search results with AI-powered bias detection</p>
     </div>
 
     <script>
         const sampleResults = [
             {
-                domain: "technews.com",
-                title: "Electric Vehicles Are Destroying the Planet: The Hidden Climate Cost",
-                snippet: "A controversial study suggests that EV manufacturing has a larger carbon footprint than traditional vehicles. Industry experts remain skeptical of these claims.",
-                biases: [
-                    { name: "climate", score: 8 },
-                    { name: "emotional", score: 7 },
-                    { name: "scientific", score: 6 }
-                ],
+                domain: "sciencenews.com",
+                title: "New Study: Electric Vehicles May Have Hidden Climate Costs",
+                snippet: "Researchers examine the environmental impact of EV manufacturing. The study finds that while EVs are cleaner over their lifetime, production impacts are significant...",
+                overallScore: 6,
+                severity: "medium",
+                biases: ["Climate Bias", "Scientific", "Emotional"]
+            },
+            {
+                domain: "reuters.com",
+                title: "Understanding Global Temperature Trends: What Science Shows",
+                snippet: "A comprehensive review of peer-reviewed research confirms that global temperatures are rising due to human activities. Major scientific organizations worldwide agree on these findings...",
+                overallScore: 2,
+                severity: "low",
+                biases: ["Scientific"]
+            },
+            {
+                domain: "tech-watch.io",
+                title: "Tesla's CEO Sparks Controversy With Latest Social Media Posts",
+                snippet: "The CEO of the electric vehicle company continues to generate debate with provocative statements. Critics point to a pattern of controversial remarks affecting company reputation...",
+                overallScore: 5,
+                severity: "medium",
+                biases: ["Corporate", "Emotional"]
+            },
+            {
+                domain: "politicalanalysis.com",
+                title: "Democrats' Climate Plan Branded 'Job Killer' by Opposition",
+                snippet: "A new environmental policy proposal faces intense partisan criticism. One political party characterizes the plan as economically destructive, though analyses on actual job impacts vary...",
                 overallScore: 7,
-                severity: "high"
-            },
-            {
-                domain: "newsanalysis.io",
-                title: "Understanding Climate Change: What the Science Actually Says",
-                snippet: "New peer-reviewed research confirms that global temperatures are rising due to human activity. Scientists across multiple disciplines agree on the basic facts.",
-                biases: [
-                    { name: "confirmation", score: 4 },
-                    { name: "scientific", score: 2 }
-                ],
-                overallScore: 3,
-                severity: "low"
-            },
-            {
-                domain: "businesswatch.net",
-                title: "Tesla's Controversial CEO Strikes Again in Latest Twitter Battle",
-                snippet: "Elon Musk's recent comments have sparked outrage on social media. Critics argue the billionaire continues to blur the line between business and personal.",
-                biases: [
-                    { name: "corporate", score: 6 },
-                    { name: "emotional", score: 7 }
-                ],
-                overallScore: 6.5,
-                severity: "high"
-            },
-            {
-                domain: "politicaltoday.com",
-                title: "Democrats Embrace Radical Climate Agenda That Will Destroy Jobs",
-                snippet: "Environmental policies pushed by one political party are characterized as 'radical' and economically destructive. Analysis lacks balanced viewpoints.",
-                biases: [
-                    { name: "political", score: 8 },
-                    { name: "emotional", score: 8 },
-                    { name: "confirmation", score: 6 }
-                ],
-                overallScore: 7.3,
-                severity: "high"
+                severity: "high",
+                biases: ["Political", "Emotional", "Confirmation Bias"]
             }
         ];
 
         function createResultCard(result) {
-            const severityClass = result.severity;
-            const biasesTags = result.biases.map(b =>
-                `<span class="bias-tag ${b.name}">${b.name} ${b.score}/10</span>`
-            ).join('');
+            const biasClass = result.severity;
+            const biasesList = result.biases.map(b => `<span class="bias-tag">${b}</span>`).join('');
 
             return `
-                <div class="result-card">
-                    <div class="result-meta">
-                        <span class="result-domain">${result.domain}</span>
-                        <span class="bias-score ${severityClass}">
-                            <span>⚠️</span> ${result.overallScore}/10
-                        </span>
-                    </div>
-                    <h3 class="result-title">${result.title}</h3>
-                    <p class="result-snippet">${result.snippet}</p>
-                    <div class="bias-tags">
-                        ${biasesTags}
+                <div class="result-item">
+                    <div class="result-domain">${result.domain} › search</div>
+                    <a class="result-title">${result.title}</a>
+                    <div class="result-snippet">${result.snippet}</div>
+                    <div class="bias-container">
+                        <div class="bias-score ${biasClass}">
+                            <span class="bias-indicator ${biasClass}"></span>
+                            Bias Score: ${result.overallScore}/10
+                        </div>
+                        <div class="bias-tags">
+                            ${biasesList}
+                        </div>
                     </div>
                 </div>
             `;
@@ -652,9 +449,11 @@
 
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
+        const searchBtn2 = document.getElementById('searchBtn2');
         const resultsSection = document.getElementById('resultsSection');
         const resultsList = document.getElementById('resultsList');
         const emptyState = document.getElementById('emptyState');
+        const resultsStats = document.getElementById('resultsStats');
 
         function performSearch() {
             const query = searchInput.value.trim();
@@ -665,25 +464,26 @@
                 return;
             }
 
-            // Show loading
             resultsSection.style.display = 'block';
             emptyState.style.display = 'none';
-            resultsList.innerHTML = '<div class="loading"><div class="spinner"></div><div class="loading-text">Analyzing results for bias...</div></div>';
+            resultsList.innerHTML = '<div class="loading-dots"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>';
+            resultsStats.textContent = 'Analyzing results for bias...';
 
-            // Simulate API call
             setTimeout(() => {
                 const html = sampleResults.map(createResultCard).join('');
                 resultsList.innerHTML = html;
-            }, 2000);
+                resultsStats.textContent = `About ${sampleResults.length} results (0.42 seconds)`;
+            }, 1500);
         }
 
         searchBtn.addEventListener('click', performSearch);
+        searchBtn2.addEventListener('click', performSearch);
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch();
         });
 
-        // Show empty state on load
-        emptyState.style.display = 'block';
+        // Focus search on load
+        searchInput.focus();
     </script>
 </body>
 </html>
