@@ -1,767 +1,447 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Verity — Search beyond the obvious</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;600&display=swap">
-<style>
-  /* Instrument: one type family across every role, a cobalt accent, hairline rules and
-     tight 4px corners. Verity claims to measure how strong evidence is, so it should read
-     like an instrument's readout rather than a magazine. Uppercase micro-labels are set in
-     mono throughout — that's the signature of the whole design. */
-  :root {
-    --bg: #F7F9FA;
-    --surface: #FFFFFF;
-    --surface-2: #EDF2F4;
-    --ink: #0E1A1F;
-    --ink-muted: #4E626B;
-    --ink-faint: #7F9099;
-    --line: #D7E1E5;
-    --line-strong: #BAC8CE;
-    --accent: #1B4FA0;
-    --accent-soft: #E2EAF6;
-    /* Opposing positions get two equal-weight hues on purpose. Green-vs-red would tell the
-       reader which side is right, which is the opposite of the point of this product. */
-    --pos-a: #1B4FA0;
-    --pos-a-soft: #E2EAF6;
-    --pos-b: #9C4A1E;
-    --pos-b-soft: #F6E8DF;
-    --flag: #84551A;
-    --flag-soft: #FAF0DE;
-    --flag-line: #E0C48E;
-    --error: #A32F1B;
-    --error-soft: #FAE9E6;
-    --radius: 4px;
-    --radius-lg: 6px;
-    --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
-    --sans: "IBM Plex Sans", -apple-system, "Segoe UI", ui-sans-serif, sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verity - Search Beyond the Obvious</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Paragone';
+            src: url('/static/ParagoneFancyAestheticSerif-lx0O0.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
 
-  /* Verity commits to the light Instrument look and does NOT follow the viewer's OS theme.
-     That's deliberate: a demo shouldn't change appearance because the laptop it's plugged
-     into happens to be set to dark mode. The dark palette below stays available, but only
-     when something explicitly stamps data-theme="dark" on the root — nothing does today. */
-  :root[data-theme="dark"] {
-    --bg: #0C1418;
-    --surface: #131F25;
-    --surface-2: #1A2830;
-    --ink: #E3ECF0;
-    --ink-muted: #98AEB8;
-    --ink-faint: #6B8290;
-    --line: #223038;
-    --line-strong: #35474F;
-    --accent: #6FA9E8;
-    --accent-soft: #13253C;
-    --pos-a: #6FA9E8;
-    --pos-a-soft: #13253C;
-    --pos-b: #D98A5A;
-    --pos-b-soft: #2B1D14;
-    --flag: #D2A75E;
-    --flag-soft: #2A2114;
-    --flag-line: #4E3E1C;
-    --error: #E58374;
-    --error-soft: #2D1A17;
-  }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  * { box-sizing: border-box; }
+        body {
+            font-family: 'Paragone', serif;
+            background: url('/static/images (10).jpg') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            filter: contrast(1.5) brightness(1.15) saturate(1.3);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
 
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sans);
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-  }
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #2d2d2d;
+            background: #252525;
+        }
 
-  .shell { max-width: 940px; margin: 0 auto; padding: 0 24px 120px; }
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 70px);
+            padding: 3rem 2rem;
+        }
 
-  /* ---------- masthead: hero on load, compact bar after a search ---------- */
-  .masthead {
-    padding: 96px 0 0;
-    text-align: center;
-    transition: padding 0.35s ease;
-  }
-  .masthead.compact { padding: 28px 0 0; text-align: left; }
+        .hero h1 {
+            font-family: 'Paragone', serif;
+            font-size: 6rem;
+            font-weight: 400;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(100, 200, 255, 0.6);
+        }
 
-  .wordmark {
-    font-family: var(--serif);
-    font-weight: 700;
-    font-size: 3.4rem;
-    letter-spacing: -0.03em;
-    margin: 0;
-    line-height: 1;
-    transition: font-size 0.35s ease;
-  }
-  .masthead.compact .wordmark { font-size: 1.5rem; }
+        /* Search Box */
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
 
-  .tagline {
-    font-family: var(--mono);
-    font-size: 0.88rem;
-    letter-spacing: 0.02em;
-    color: var(--ink-muted);
-    margin: 14px 0 0;
-  }
-  .masthead.compact .tagline { display: none; }
+        .search-box {
+            width: 100%;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            background: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            transition: border-color 0.2s;
+        }
 
-  .blurb {
-    font-size: 0.9rem;
-    color: var(--ink-faint);
-    max-width: 54ch;
-    margin: 10px auto 0;
-  }
-  .masthead.compact .blurb { display: none; }
+        .search-box:hover {
+            border-color: #4d4d4d;
+        }
 
-  .search-row {
-    display: flex;
-    gap: 10px;
-    margin: 30px auto 0;
-    max-width: 680px;
-  }
-  .masthead.compact .search-row { margin: 14px 0 0; max-width: none; }
+        .search-box:focus-within {
+            border-color: #5d5d5d;
+        }
 
-  #q {
-    flex: 1;
-    padding: 15px 18px;
-    font-size: 1rem;
-    font-family: var(--sans);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    color: var(--ink);
-  }
-  #q:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            color: #e0e0e0;
+            font-family: 'Paragone', serif;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+        }
 
-  #go {
-    padding: 15px 26px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    font-family: var(--sans);
-    border: none;
-    border-radius: var(--radius-lg);
-    background: var(--ink);
-    color: var(--bg);
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  #go:hover { opacity: 0.9; }
-  #go:disabled { opacity: 0.45; cursor: default; }
+        .search-box input::placeholder {
+            color: #666666;
+        }
 
-  .examples {
-    margin: 16px auto 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    max-width: 680px;
-  }
-  .masthead.compact .examples { display: none; }
-  .chip {
-    font-size: 0.82rem;
-    padding: 7px 14px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: var(--surface);
-    color: var(--ink-muted);
-    cursor: pointer;
-    font-family: var(--sans);
-  }
-  .chip:hover { border-color: var(--accent); color: var(--accent); }
+        .search-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #888888;
+            font-size: 1.1rem;
+            padding: 0 0.5rem;
+            transition: color 0.2s;
+        }
 
-  /* ---------- research progress ---------- */
-  .progress {
-    margin-top: 30px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    padding: 18px 20px;
-    display: none;
-  }
-  .progress.visible { display: block; }
-  .progress-head {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 0.9rem; font-weight: 600; margin-bottom: 12px;
-  }
-  .spinner {
-    width: 14px; height: 14px; border-radius: 50%;
-    border: 2px solid var(--line); border-top-color: var(--accent);
-    animation: spin 0.8s linear infinite; flex-shrink: 0;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .log { margin: 0; padding: 0; list-style: none; font-size: 0.83rem; }
-  .log li { color: var(--ink-faint); padding: 2.5px 0; }
-  .log li:last-child { color: var(--ink); font-weight: 600; }
+        .search-btn:hover {
+            color: #e0e0e0;
+        }
 
-  .error-box {
-    margin-top: 24px; padding: 15px 18px;
-    border: 1px solid var(--error); background: var(--error-soft);
-    color: var(--error); border-radius: var(--radius-lg); font-size: 0.9rem; display: none;
-  }
-  .error-box.visible { display: block; }
+        /* Results Section */
+        .results-section {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: none;
+        }
 
-  /* ---------- results ---------- */
-  .results { display: none; margin-top: 40px; }
-  .results.visible { display: block; }
+        .results-section.active {
+            display: block;
+        }
 
-  .section { margin-bottom: 44px; }
-  .section-label {
-    font-family: var(--mono);
-    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.13em;
-    font-weight: 700; color: var(--ink-faint);
-    padding-bottom: 9px; border-bottom: 1px solid var(--line); margin-bottom: 18px;
-  }
-  .section-label.flagged { color: var(--flag); border-bottom-color: var(--flag-line); }
+        .results-header {
+            margin-bottom: 2rem;
+        }
 
-  .answer { font-family: var(--serif); font-size: 1.1rem; line-height: 1.65; }
-  .answer p { margin: 0 0 16px; }
+        .results-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
 
-  .cite {
-    font-family: var(--mono);
-    display: inline-block;
-    font-size: 0.68rem;
-    font-weight: 700;
-    min-width: 17px;
-    height: 17px;
-    line-height: 15px;
-    text-align: center;
-    border-radius: 4px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    text-decoration: none;
-    vertical-align: super;
-    margin: 0 1px;
-    padding: 0 3px;
-  }
-  .cite:hover { background: var(--accent); color: var(--surface); }
+        .results-meta {
+            color: #888888;
+            font-size: 0.9rem;
+        }
 
-  .verdict {
-    margin-top: 8px;
-    padding: 14px 16px;
-    background: var(--surface-2);
-    border-left: 3px solid var(--accent);
-    border-radius: 0 var(--radius) var(--radius) 0;
-    font-family: var(--serif);
-    font-size: 1rem;
-  }
+        /* Progress Stream */
+        .progress-stream {
+            margin-bottom: 2rem;
+            background: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            padding: 1.25rem;
+        }
 
-  /* Hierarchy rule for everything below: a border or a fill means "this is a separate
-     object, look here". Spent on every block it flattens into noise, so only the missing-
-     perspectives panel gets a fill. Everything else is separated by hairlines and spacing,
-     which is enough, and lets the answer stay the loudest thing on the page. */
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: #b0b0b0;
+            font-size: 0.95rem;
+        }
 
-  /* ---------- evidence ---------- */
-  .claim { padding: 16px 0; border-top: 1px solid var(--line); }
-  .claim:first-of-type { border-top: none; padding-top: 2px; }
-  .claim-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
-  .claim-text { font-family: var(--serif); font-size: 1.04rem; flex: 1; }
-  .strength {
-    font-family: var(--mono);
-    font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.09em;
-    font-weight: 600; white-space: nowrap; padding-top: 3px;
-  }
-  /* Strength is the one place a rating needs to read at a glance, so it's carried by colour
-     and weight alone — no pills, which would put a box back on every row. */
-  .strength.Strong { color: var(--accent); font-weight: 700; }
-  .strength.Moderate { color: var(--accent); }
-  .strength.Limited { color: var(--ink-faint); }
-  .strength.Conflicting { color: var(--pos-b); font-weight: 700; }
-  .strength.Insufficient { color: var(--ink-faint); }
-  .strength-why { font-size: 0.83rem; color: var(--ink-muted); }
+        .progress-item:last-child {
+            margin-bottom: 0;
+        }
 
-  .ev-row { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; margin-top: 9px; align-items: center; }
-  .ev-group { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-  .ev-label {
-    font-family: var(--mono); color: var(--ink-faint); text-transform: uppercase;
-    font-size: 0.64rem; letter-spacing: 0.07em; font-weight: 600; }
-  .caveat { margin: 8px 0 0; font-size: 0.83rem; color: var(--ink-muted); }
+        .progress-spinner {
+            min-width: 20px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #4d4d4d;
+            border-top-color: #bb86fc;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
 
-  /* ---------- perspectives ---------- */
-  .persp { padding: 15px 0 15px 14px; border-left: 2px solid var(--line-strong); margin-bottom: 2px; }
-  .persp.a { border-left-color: var(--pos-a); }
-  .persp.b { border-left-color: var(--pos-b); }
-  .persp-name {
-    font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase;
-    letter-spacing: 0.09em; font-weight: 600; color: var(--ink-faint); margin-bottom: 6px;
-  }
-  .persp-arg { font-family: var(--serif); font-size: 1rem; margin-bottom: 6px; }
-  .kv { font-size: 0.83rem; color: var(--ink-muted); margin-bottom: 3px; }
-  .kv b { color: var(--ink-muted); font-weight: 600; }
+        .progress-item.done .progress-spinner {
+            animation: none;
+            border: none;
+            color: #10b981;
+        }
 
-  /* ---------- missing perspectives: the one block that gets a fill ---------- */
-  .missing-panel {
-    border: 1px solid var(--flag-line); border-radius: var(--radius-lg);
-    background: var(--flag-soft); padding: 20px 22px;
-  }
-  .missing-head { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; margin-bottom: 6px; }
-  .missing-sub { font-size: 0.88rem; color: var(--ink-muted); margin-bottom: 16px; }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
-  .distbar {
-    display: flex; height: 8px; border-radius: 999px; overflow: hidden;
-    margin-bottom: 7px; background: var(--surface);
-  }
-  .distbar span { display: block; }
-  .dist-Supportive { background: var(--pos-a); }
-  .dist-Critical { background: var(--pos-b); }
-  .dist-Mixed { background: var(--ink-faint); }
-  .dist-Neutral { background: var(--line-strong); }
-  .dist-Unclear { background: var(--surface-2); }
-  .dist-legend {
-    display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px;
-    font-family: var(--mono); font-size: 0.68rem; color: var(--ink-muted);
-  }
-  .dist-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; }
+        /* Evidence Map */
+        .evidence-container {
+            margin-top: 2rem;
+        }
 
-  .gap-list { margin: 4px 0 0; padding-left: 18px; font-size: 0.85rem; color: var(--ink-muted); }
-  .gap-list li { margin-bottom: 3px; }
+        .evidence-section {
+            margin-bottom: 2rem;
+        }
 
-  .missing-item { padding: 14px 0; border-top: 1px solid var(--flag-line); }
-  .missing-topic { font-family: var(--serif); font-weight: 600; font-size: 1rem; margin-bottom: 5px; }
+        .evidence-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
 
-  .hidden-extra { display: none; }
-  .hidden-extra.shown { display: block; }
-  .reveal-btn {
-    margin-top: 14px; padding: 9px 16px; font-size: 0.82rem; font-weight: 600;
-    font-family: var(--sans); border-radius: var(--radius); cursor: pointer;
-    background: transparent; color: var(--flag); border: 1px solid var(--flag);
-  }
-  .reveal-btn:hover { background: var(--flag); color: var(--surface); }
+        .evidence-item {
+            background: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
 
-  /* ---------- source independence ---------- */
-  .indep-summary { font-family: var(--serif); font-size: 1.02rem; margin-bottom: 20px; }
-  .funnel {
-    display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap;
-    padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid var(--line);
-  }
-  .funnel-step { text-align: left; }
-  .funnel-n {
-    font-family: var(--mono); font-size: 1.9rem; font-weight: 600;
-    font-variant-numeric: tabular-nums; line-height: 1; color: var(--ink);
-  }
-  .funnel-l {
-    font-family: var(--mono); font-size: 0.64rem; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--ink-faint); font-weight: 600; margin-top: 5px; }
-  .funnel-arrow { color: var(--line-strong); font-size: 1.1rem; align-self: center; }
+        .source-title {
+            font-weight: 600;
+            color: #bb86fc;
+            margin-bottom: 0.5rem;
+        }
 
-  .cluster { padding: 12px 0; border-top: 1px solid var(--line); }
-  .cluster:first-of-type { border-top: none; }
-  .cluster-root {
-    font-family: var(--mono); font-size: 0.8rem; font-weight: 600;
-    margin-bottom: 6px; word-break: break-all; color: var(--ink);
-  }
-  .cluster-kind {
-    font-family: var(--mono); font-size: 0.64rem; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--ink-faint); font-weight: 600; margin-bottom: 5px; }
-  .cluster-members { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 5px; }
-  .cluster-members li {
-    font-size: 0.78rem; color: var(--ink-muted);
-    background: var(--surface-2); border-radius: var(--radius); padding: 2px 8px;
-  }
+        .source-meta {
+            color: #888888;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
 
-  /* ---------- sources: compact rows, not cards ---------- */
-  .source { padding: 14px 0; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
-  .source:first-of-type { border-top: none; }
-  .source:target { background: var(--accent-soft); box-shadow: -14px 0 0 var(--accent-soft), 14px 0 0 var(--accent-soft); }
-  .source-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
-  .source-n {
-    font-family: var(--mono);
-    font-size: 0.68rem; font-weight: 600; min-width: 19px; height: 19px; line-height: 17px;
-    text-align: center; border-radius: var(--radius); background: var(--accent-soft);
-    color: var(--accent); border: 1px solid var(--accent);
-  }
-  .source-domain { font-weight: 600; font-size: 0.9rem; color: var(--ink); text-decoration: none; }
-  .source-domain:hover { color: var(--accent); text-decoration: underline; }
-  /* Source metadata reads as one quiet mono string rather than three separate pills. */
-  .badge {
-    font-family: var(--mono);
-    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
-    color: var(--ink-faint);
-  }
-  .badge::before { content: "· "; color: var(--line-strong); }
-  .badge.counter { color: var(--flag); }
-  .badge.primary { color: var(--accent); }
-  .source-summary { font-size: 0.88rem; color: var(--ink-muted); margin-bottom: 6px; }
-  .stake { font-size: 0.82rem; color: var(--ink-muted); }
-  .stake.flagged { color: var(--flag); padding-left: 10px; border-left: 2px solid var(--flag); }
-  .stake-label {
-    font-family: var(--mono);
-    text-transform: uppercase; font-size: 0.62rem; letter-spacing: 0.08em;
-    font-weight: 600; margin-right: 6px; opacity: 0.85;
-  }
+        .source-snippet {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
 
-  /* ---------- disclosure panels ---------- */
-  details { border-top: 1px solid var(--line); }
-  details:last-of-type { border-bottom: 1px solid var(--line); }
-  details[open] { padding-bottom: 16px; }
-  summary {
-    cursor: pointer; padding: 13px 0; font-size: 0.86rem; font-weight: 600;
-    list-style: none; color: var(--ink-muted);
-  }
-  summary:hover { color: var(--ink); }
-  summary::-webkit-details-marker { display: none; }
-  summary::before { content: "+ "; color: var(--accent); font-weight: 700; font-family: var(--mono); }
-  details[open] summary::before { content: "\2212 "; }
-  .why-col { margin: 0; padding-left: 18px; font-size: 0.86rem; color: var(--ink-muted); }
-  .why-col li { margin-bottom: 4px; }
-  .why-head {
-    font-family: var(--mono); font-size: 0.66rem; text-transform: uppercase;
-    letter-spacing: 0.08em; font-weight: 600; color: var(--ink-faint); margin: 12px 0 6px; }
-  .statgrid {
-    display: flex; flex-wrap: wrap; gap: 5px 20px;
-    font-family: var(--mono); font-size: 0.78rem; color: var(--ink-muted);
-  }
-  .statgrid b { font-variant-numeric: tabular-nums; color: var(--ink); }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
 
-  .footnote {
-    margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
-    font-size: 0.78rem; color: var(--ink-faint); line-height: 1.6; max-width: 72ch;
-  }
+            .results-section {
+                padding: 0 1rem;
+            }
+        }
 
-  @media (max-width: 640px) {
-    .masthead { padding-top: 56px; }
-    .wordmark { font-size: 2.6rem; }
-    .search-row { flex-direction: column; }
-  }
-</style>
+        /* Loading dots */
+        .loading-dots {
+            display: inline-flex;
+            gap: 0.3rem;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #888888;
+            animation: bounce 1.4s infinite;
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 60%, 100% {
+                opacity: 0.3;
+            }
+            30% {
+                opacity: 1;
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #888888;
+            display: block;
+        }
+    </style>
 </head>
 <body>
-  <div class="shell">
-    <header class="masthead" id="masthead">
-      <h1 class="wordmark">Verity</h1>
-      <p class="tagline">Search beyond the obvious.</p>
-      <p class="blurb">
-        Verity investigates a question across multiple search engines, reads the sources in
-        full, then goes looking for the credible evidence those results left out.
-      </p>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Verity</div>
+    </nav>
 
-      <div class="search-row">
-        <input id="q" type="text" autocomplete="off" placeholder="Ask a question...">
-        <button id="go" type="button">Search</button>
-      </div>
-
-      <div class="examples">
-        <button class="chip" type="button">Is nuclear power safe?</button>
-        <button class="chip" type="button">Are EVs actually better for the environment?</button>
-        <button class="chip" type="button">Does social media improve mental health?</button>
-      </div>
-    </header>
-
-    <div class="progress" id="progress">
-      <div class="progress-head"><div class="spinner"></div><span id="progress-title">Researching...</span></div>
-      <ul class="log" id="log"></ul>
+    <!-- Hero Section -->
+    <div class="hero" id="heroSection">
+        <h1>Verity</h1>
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search unbiasedly...">
+                <button class="search-btn" id="searchBtn">🔍</button>
+            </div>
+        </div>
     </div>
 
-    <div class="error-box" id="error"></div>
-
-    <main class="results" id="results"></main>
-  </div>
-
-<script>
-  const qEl = document.getElementById("q");
-  const goEl = document.getElementById("go");
-  const mastheadEl = document.getElementById("masthead");
-  const progressEl = document.getElementById("progress");
-  const progressTitle = document.getElementById("progress-title");
-  const logEl = document.getElementById("log");
-  const errorEl = document.getElementById("error");
-  const resultsEl = document.getElementById("results");
-
-  let stream = null;
-
-  document.querySelectorAll(".chip").forEach(chip => {
-    chip.addEventListener("click", () => { qEl.value = chip.textContent.trim(); run(); });
-  });
-
-  function esc(s) {
-    return String(s == null ? "" : s)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
-
-  // Turns [1] and [2][5] in the model's prose into links down to the matching source card.
-  function linkCitations(text, maxN) {
-    return esc(text).replace(/\[(\d+)\]/g, (whole, n) => {
-      const num = parseInt(n, 10);
-      if (!num || num > maxN) return "";
-      return `<a class="cite" href="#src-${num}">${num}</a>`;
-    });
-  }
-
-  function paragraphs(text, maxN) {
-    return String(text || "").split(/\n{2,}/).filter(p => p.trim())
-      .map(p => `<p>${linkCitations(p.trim(), maxN)}</p>`).join("");
-  }
-
-  function refChips(nums) {
-    if (!nums || !nums.length) return '<span class="kv">none</span>';
-    return nums.map(n => `<a class="cite" href="#src-${n}">${n}</a>`).join("");
-  }
-
-  function setBusy(busy) {
-    goEl.disabled = busy; qEl.disabled = busy;
-    goEl.textContent = busy ? "Researching..." : "Search";
-    progressEl.classList.toggle("visible", busy);
-  }
-
-  function addLog(message) {
-    const li = document.createElement("li");
-    li.textContent = message;
-    logEl.appendChild(li);
-    while (logEl.children.length > 9) logEl.removeChild(logEl.firstChild);
-  }
-
-  function renderDistribution(dist) {
-    const pct = (dist && dist.percent) || {};
-    const keys = Object.keys(pct);
-    if (!keys.length) return "";
-    const bar = keys.map(k => `<span class="dist-${k}" style="width:${pct[k]}%"></span>`).join("");
-    const legend = keys.map(k =>
-      `<span><i class="dist-${k}"></i>${esc(k)} ${pct[k]}%</span>`).join("");
-    return `<div class="distbar">${bar}</div><div class="dist-legend">${legend}</div>`;
-  }
-
-  function renderMissing(d, maxN) {
-    const items = (d.missing || []).map(m => `
-      <div class="missing-item">
-        <div class="missing-topic">${esc(m.topic)}</div>
-        <div class="kv">${esc(m.why_it_matters)}</div>
-        <div class="kv"><b>Found:</b> ${esc(m.evidence)} ${refChips(m.sources)}</div>
-      </div>`);
-
-    const firstTwo = items.slice(0, 2).join("");
-    const rest = items.slice(2).join("");
-    const gaps = (d.counter_gaps || []).map(g => `<li>${esc(g)}</li>`).join("");
-
-    const revealBtn = rest
-      ? `<button class="reveal-btn" id="reveal-missing" type="button">Show ${items.length - 2} more</button>
-         <div class="hidden-extra" id="missing-extra">${rest}</div>`
-      : "";
-
-    return `
-      <div class="section">
-        <div class="section-label flagged">What you might be missing</div>
-        <div class="missing-panel">
-          <div class="missing-head">You may be seeing an incomplete picture</div>
-          <div class="missing-sub">
-            The first pass of results leaned <b>${esc(d.initial_lean_text || "unknown")}</b>, so
-            Verity ran ${(d.counter_queries || []).length} more searches looking for evidence that
-            could overturn it. This doesn't mean both sides are equally right — it means these
-            came up short in the obvious results.
-          </div>
-          ${renderDistribution(d.initial_distribution)}
-          ${firstTwo}
-          ${revealBtn}
-          ${gaps ? `<details><summary>What it went looking for</summary>
-            <ul class="gap-list">${gaps}</ul></details>` : ""}
+    <!-- Results Section -->
+    <div class="results-section" id="resultsSection">
+        <div class="results-header">
+            <h2 id="resultsTitle">Analyzing...</h2>
+            <div class="results-meta" id="resultsMeta"></div>
         </div>
-      </div>`;
-  }
 
-  function renderIndependence(indep) {
-    if (!indep) return "";
-    const clusters = (indep.clusters || []).map(c => `
-      <div class="cluster">
-        <div class="cluster-kind">Shared ${esc(c.upstream_kind)}${c.upstream_was_read ? " — also read directly by Verity" : ""}</div>
-        <div class="cluster-root">${esc(c.upstream)}</div>
-        <ul class="cluster-members">
-          ${(c.members || []).map(m => `<li>${esc(m)}</li>`).join("")}
-        </ul>
-      </div>`).join("");
+        <!-- Progress Stream -->
+        <div class="progress-stream" id="progressStream"></div>
 
-    const independent = (indep.independent || []).length
-      ? `<div class="cluster">
-           <div class="cluster-kind">No shared upstream detected</div>
-           <ul class="cluster-members">
-             ${indep.independent.map(m => `<li>${esc(m)}</li>`).join("")}
-           </ul>
-         </div>`
-      : "";
-
-    return `
-      <div class="section">
-        <div class="section-label">Are these sources independent?</div>
-        <div class="funnel">
-          <div class="funnel-step">
-            <div class="funnel-n">${indep.total_sources}</div>
-            <div class="funnel-l">sources read</div>
-          </div>
-          <div class="funnel-arrow">&rarr;</div>
-          <div class="funnel-step">
-            <div class="funnel-n">${(indep.clusters || []).length}</div>
-            <div class="funnel-l">shared upstreams</div>
-          </div>
-          <div class="funnel-arrow">&rarr;</div>
-          <div class="funnel-step">
-            <div class="funnel-n">${indep.distinct_clusters}</div>
-            <div class="funnel-l">distinct lines of evidence</div>
-          </div>
+        <!-- Evidence Map -->
+        <div class="evidence-container" id="evidenceContainer" style="display: none;">
+            <div class="evidence-section" id="perspectivesSection"></div>
+            <div class="evidence-section" id="missingSection"></div>
         </div>
-        <div class="indep-summary">${esc(indep.summary)}</div>
-        ${clusters}${independent}
-        <p class="kv" style="margin-top:14px">
-          Measured from links these pages actually published — not inferred by a model.
-        </p>
-      </div>`;
-  }
+    </div>
 
-  function renderSources(sources) {
-    const cards = (sources || []).map(s => {
-      const hasStake = s.interest && !/^no obvious stake|^unknown/i.test(s.interest.trim());
-      const isPrimary = /^primary/i.test(s.primary_or_secondary || "");
-      return `
-        <div class="source" id="src-${s.n}">
-          <div class="source-top">
-            <span class="source-n">${s.n}</span>
-            <a class="source-domain" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.domain)}</a>
-            <span class="badge">${esc(s.type)}</span>
-            ${isPrimary ? '<span class="badge primary">Primary</span>' : ""}
-            <span class="badge">${esc(s.stance)}</span>
-            ${s.from_counter_search ? '<span class="badge counter">Found by counter-search</span>' : ""}
-          </div>
-          ${s.summary ? `<div class="source-summary">${esc(s.summary)}</div>` : ""}
-          ${hasStake ? `
-            <div class="stake flagged">
-              <span class="stake-label">Interest</span>${esc(s.interest)}
-            </div>` : ""}
-        </div>`;
-    }).join("");
-    return `<div class="section"><div class="section-label">Sources</div>${cards}</div>`;
-  }
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState">
+        <p>Search to find evidence beyond the obvious</p>
+    </div>
 
-  function renderResult(d) {
-    const maxN = (d.sources || []).length;
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const heroSection = document.getElementById('heroSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const progressStream = document.getElementById('progressStream');
+        const emptyState = document.getElementById('emptyState');
+        const resultsTitle = document.getElementById('resultsTitle');
+        const resultsMeta = document.getElementById('resultsMeta');
+        const perspectivesSection = document.getElementById('perspectivesSection');
+        const missingSection = document.getElementById('missingSection');
+        const evidenceContainer = document.getElementById('evidenceContainer');
 
-    const claims = (d.claims || []).map(c => `
-      <div class="claim">
-        <div class="claim-head">
-          <div class="claim-text">${esc(c.claim)}</div>
-          <div class="strength ${esc(c.strength)}">${esc(c.strength)}</div>
-        </div>
-        ${c.strength_reason ? `<div class="strength-why">${esc(c.strength_reason)}</div>` : ""}
-        <div class="ev-row">
-          <div class="ev-group"><span class="ev-label">For</span>${refChips(c.supporting)}</div>
-          <div class="ev-group"><span class="ev-label">Against</span>${refChips(c.challenging)}</div>
-        </div>
-        ${(c.caveats || []).length
-          ? `<p class="caveat">${esc(c.caveats[0])}</p>` : ""}
-      </div>`).join("");
+        let progressItems = {};
 
-    const perspectives = (d.perspectives || []).map((p, i) => `
-      <div class="persp ${i % 2 === 0 ? "a" : "b"}">
-        <div class="persp-name">${esc(p.name)}</div>
-        <div class="persp-arg">${esc(p.argument)} ${refChips(p.sources)}</div>
-        ${p.caveat ? `<div class="kv"><b>Caveat:</b> ${esc(p.caveat)}</div>` : ""}
-      </div>`).join("");
+        function performSearch() {
+            const query = searchInput.value.trim();
 
-    const uncertainties = (d.uncertainties || []).length
-      ? `<div class="section">
-           <div class="section-label">What remains uncertain</div>
-           <ul class="gap-list">${d.uncertainties.map(u => `<li>${esc(u)}</li>`).join("")}</ul>
-         </div>`
-      : "";
+            if (!query) {
+                resultsSection.classList.remove('active');
+                emptyState.style.display = 'block';
+                return;
+            }
 
-    const why = d.why || {};
-    const st = d.stats || {};
+            // Hide hero and show results
+            heroSection.style.display = 'none';
+            emptyState.style.display = 'none';
+            resultsSection.classList.add('active');
+            progressStream.innerHTML = '';
+            progressItems = {};
 
-    resultsEl.innerHTML = `
-      <div class="section">
-        <div class="section-label">Verity's answer</div>
-        <div class="answer">${paragraphs(d.answer, maxN)}</div>
-        ${d.verdict_note ? `<div class="verdict">${esc(d.verdict_note)}</div>` : ""}
-      </div>
+            resultsTitle.textContent = `Searching: "${query}"`;
+            resultsMeta.textContent = 'Investigating across multiple sources...';
 
-      ${claims ? `<div class="section"><div class="section-label">What the evidence says</div>${claims}</div>` : ""}
-      ${perspectives ? `<div class="section"><div class="section-label">Different perspectives</div>${perspectives}</div>` : ""}
+            // Connect to server-sent events
+            const eventSource = new EventSource(`/api/search?q=${encodeURIComponent(query)}`);
 
-      ${renderMissing(d, maxN)}
-      ${renderIndependence(d.independence)}
-      ${uncertainties}
+            eventSource.addEventListener('status', (event) => {
+                const data = JSON.parse(event.data);
+                updateProgress(data);
+            });
 
-      <div class="section">
-        <div class="section-label">Behind this answer</div>
-        <details>
-          <summary>Why did Verity conclude this?</summary>
-          ${(why.supports || []).length ? `<div class="why-head">Reasons to trust it</div>
-            <ul class="why-col">${why.supports.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
-          ${(why.cautions || []).length ? `<div class="why-head">Reasons for caution</div>
-            <ul class="why-col">${why.cautions.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
-        </details>
-        <details>
-          <summary>Research performed</summary>
-          <div class="statgrid">
-            <div>Dimensions investigated <b>${st.dimensions || 0}</b></div>
-            <div>Initial searches <b>${st.initial_searches || 0}</b></div>
-            <div>Counter-searches <b>${st.counter_searches || 0}</b></div>
-            <div>Sources seen <b>${st.sources_seen || 0}</b></div>
-            <div>Sources read in full <b>${st.sources_read || 0}</b></div>
-            <div>Run time <b>${st.seconds || 0}s</b></div>
-          </div>
-          ${(d.dimensions || []).length ? `<div class="why-head">Dimensions</div>
-            <ul class="why-col">${d.dimensions.map(x =>
-              `<li><b>${esc(x.name)}</b> — searched: ${esc(x.query)}</li>`).join("")}</ul>` : ""}
-          ${(d.counter_queries || []).length ? `<div class="why-head">Counter-searches run</div>
-            <ul class="why-col">${d.counter_queries.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
-        </details>
-      </div>
+            eventSource.addEventListener('result', (event) => {
+                const data = JSON.parse(event.data);
+                displayResults(data);
+            });
 
-      ${renderSources(d.sources)}
+            eventSource.addEventListener('error_msg', (event) => {
+                const error = event.data;
+                resultsTitle.textContent = 'Error';
+                resultsMeta.textContent = error;
+                eventSource.close();
+            });
 
-      <p class="footnote">
-        Verity's analysis is AI-generated and can be wrong. Labels, stances and evidence ratings
-        are judgements, not facts — every source links out so you can check it. Verity doesn't
-        claim to be unbiased; it claims to show you what it looked at and what it went looking for.
-      </p>`;
+            eventSource.addEventListener('done', () => {
+                eventSource.close();
+            });
+        }
 
-    const revealBtn = document.getElementById("reveal-missing");
-    if (revealBtn) {
-      revealBtn.addEventListener("click", () => {
-        document.getElementById("missing-extra").classList.add("shown");
-        revealBtn.remove();
-      });
-    }
+        function updateProgress(status) {
+            const key = status.stage || status;
 
-    resultsEl.classList.add("visible");
-  }
+            if (!progressItems[key]) {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+                item.id = `progress-${key}`;
+                item.innerHTML = `
+                    <div class="progress-spinner"></div>
+                    <span>${status.message || key}</span>
+                `;
+                progressStream.appendChild(item);
+                progressItems[key] = item;
+            }
 
-  function run() {
-    const question = qEl.value.trim();
-    if (!question) return;
+            if (status.complete) {
+                progressItems[key].classList.add('done');
+                progressItems[key].querySelector('.progress-spinner').innerHTML = '✓';
+            }
+        }
 
-    if (stream) stream.close();
-    errorEl.classList.remove("visible");
-    resultsEl.classList.remove("visible");
-    resultsEl.innerHTML = "";
-    logEl.innerHTML = "";
-    mastheadEl.classList.add("compact");
-    progressTitle.textContent = `Investigating: ${question}`;
-    setBusy(true);
-    addLog("Planning the research...");
+        function displayResults(data) {
+            // Update title with answer
+            if (data.answer) {
+                resultsTitle.textContent = data.answer;
+            }
 
-    stream = new EventSource("/api/search?q=" + encodeURIComponent(question));
-    stream.addEventListener("status", e => addLog(JSON.parse(e.data)));
-    stream.addEventListener("result", e => { renderResult(JSON.parse(e.data)); });
-    stream.addEventListener("error_msg", e => {
-      errorEl.textContent = JSON.parse(e.data);
-      errorEl.classList.add("visible");
-    });
-    stream.addEventListener("done", () => {
-      setBusy(false);
-      if (stream) { stream.close(); stream = null; }
-    });
-    stream.onerror = () => {
-      if (!resultsEl.classList.contains("visible")) {
-        errorEl.textContent = "Lost connection to the server. Is app.py still running?";
-        errorEl.classList.add("visible");
-      }
-      setBusy(false);
-      if (stream) { stream.close(); stream = null; }
-    };
-  }
+            // Display perspectives
+            if (data.perspectives) {
+                perspectivesSection.innerHTML = '<h3>Perspectives</h3>';
+                data.perspectives.forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = 'evidence-item';
+                    item.innerHTML = `
+                        <div class="source-title">${p.position || 'View'}</div>
+                        <div class="source-meta">Supporting sources: ${p.count || 1}</div>
+                        <div class="source-snippet">${p.summary || ''}</div>
+                    `;
+                    perspectivesSection.appendChild(item);
+                });
+                evidenceContainer.style.display = 'block';
+            }
 
-  goEl.addEventListener("click", run);
-  qEl.addEventListener("keydown", e => { if (e.key === "Enter") run(); });
-</script>
+            // Display missing evidence
+            if (data.missing) {
+                missingSection.innerHTML = '<h3>Missing Evidence</h3>';
+                data.missing.forEach(m => {
+                    const item = document.createElement('div');
+                    item.className = 'evidence-item';
+                    item.innerHTML = `
+                        <div class="source-title">${m.query}</div>
+                        <div class="source-snippet">${m.reasoning || ''}</div>
+                    `;
+                    missingSection.appendChild(item);
+                });
+            }
+        }
+
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        searchInput.focus();
+    </script>
 </body>
 </html>
