@@ -62,7 +62,7 @@ verity/
 
 ## 🎓 Team & Attribution
 
-Built by the Bias Detective team for Battle of the Schools 2026
+Built by the team for Battle of the Schools 2026
 
 ## 📝 License
 
