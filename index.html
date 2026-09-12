@@ -334,6 +334,30 @@
             }
         }
 
+        /* Back Button */
+        .back-btn {
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            font-family: inherit;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .back-btn:active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
         /* Empty state */
         .empty-state {
             text-align: center;
@@ -367,6 +391,7 @@
 
     <!-- Results Section -->
     <div class="results-section" id="resultsSection">
+        <button class="back-btn" id="backBtn">← Back to Home</button>
         <div class="results-header">
             <h2 id="resultsTitle">Analyzing...</h2>
             <div class="results-meta" id="resultsMeta"></div>
@@ -561,6 +586,15 @@
         searchBtn.addEventListener('click', performSearch);
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch();
+        });
+
+        // Back to home button
+        document.getElementById('backBtn').addEventListener('click', () => {
+            heroSection.classList.remove('compact');
+            resultsSection.classList.remove('active');
+            emptyState.style.display = 'block';
+            searchInput.value = '';
+            searchInput.focus();
         });
 
         searchInput.focus();
