@@ -1,69 +1,95 @@
-# Verity: AI Search Engine for Bias Detection
+# Verity
 
-An intelligent search engine powered by AI agents that detects and flags various forms of biases in online content.
+**Search beyond the obvious.**
 
-## 🎯 Project Overview
+Built for Battle of the Schools — Steel.dev web agents track.
 
-Verity is an AI-driven web search application that identifies multiple categories of bias in real-time search results:
+Search engines optimise for finding information. AI assistants optimise for producing an
+answer. Neither tells you how strong the evidence is, where it actually came from, or what
+you're not being shown.
 
-- **Political Bias** - Left/right leaning perspectives
-- **Corporate Bias** - Unethical or controversial companies/celebrities
-- **Scientific Bias** - Misleading or false scientific claims
-- **Climate Bias** - Climate change denial or misinformation
-- **Emotional Bias** - Emotionally charged or manipulative language
-- **Confirmation Bias** - Results that reinforce existing beliefs
+Verity is a research agent that investigates a question instead of answering it. It searches
+across multiple engines, reads the sources in full, then deliberately goes looking for the
+credible evidence the first page of results left out — and it shows you when a dozen
+"independent" articles all trace back to the same document.
 
-## 🚀 Key Features
+Verity does not claim to be unbiased. It claims to make bias visible.
 
-- **Automated Web Scraping**: Uses Steel.dev browser API to autonomously crawl and analyze web content
-- **Multi-Category Bias Detection**: Analyzes search results across 6+ bias categories
-- **Real-Time Analysis**: Processes search queries and returns bias scores instantly
-- **User-Friendly Interface**: Clean web interface for running searches and viewing results
-- **Bias Severity Scoring**: Quantifies bias level from 1-10 for each category
-- **Source Credibility**: Tracks source reliability and known biases
+## What it actually does
 
-## 📊 How It Works
+1. **Decomposes the question** into the dimensions that determine the answer (for EVs: battery
+   manufacturing, grid mix, mining, recycling, lifecycle emissions) and searches each one.
+2. **Searches multiple engines in parallel** — DuckDuckGo and Bing — so no single engine's
+   ranking decides what you see. One source per domain: ten pages from one outlet is one
+   perspective, not ten.
+3. **Reads every source in full** in its own Steel cloud browser, concurrently. Search
+   snippets are written to be clicked, not to be accurate.
+4. **Classifies each source** — stance, type, primary vs secondary, and what stake it has in
+   the answer, stated as a checkable fact ("trade body funded by nuclear operators").
+5. **Searches for what's missing.** Given the conclusion the first pass points at, it plans
+   and runs fresh searches aimed at evidence that could qualify or overturn it — then reports
+   what it found. This is the point of the whole product.
+6. **Checks source independence** by tracing real outbound links. If eight articles all cite
+   the same government report, that's one line of evidence, not eight. This step is
+   deterministic — computed from links the pages actually published, not inferred by a model.
+7. **Synthesises** an answer with inline citations, an evidence map with strength ratings,
+   perspectives grouped by position rather than politics, and open uncertainties.
 
-1. **User Input**: Enters a search query or topic to analyze
-2. **Web Crawling**: AI agent uses Steel.dev to search the web and gather results
-3. **Content Analysis**: LLM analyzes each result for bias patterns
-4. **Scoring**: Assigns bias scores across all categories
-5. **Visualization**: Displays results with bias indicators and breakdowns
-6. **Explanation**: Provides reasoning for detected biases
+No false balance: if the good evidence lands mostly on one side, Verity says so.
 
-## 🏆 Hackathon Context
-
-Built for **Battle of the Schools** Steel.dev Track:
-- **Event**: Battle of the Schools (September 12-13, 2026)
-- **Venue**: Bahen Centre, University of Toronto
-- **Track**: Steel.dev Web Agents
-- **Sponsor**: Steel.dev (Web Agents Track)
-- **Prize**: $1,000 cash + $600 Steel Pro credits + $500 OpenRouter credits for 1st place
-- **Submission Deadline**: Sunday, September 13 @ 11:00 AM
-- **Devpost**: https://battle-of-the-schools.devpost.com/
-
-## 🛠️ Technology Stack
-
-See [TECH.md](TECH.md) for detailed technical specifications.
-
-## 📖 Project Structure
+## Setup
 
 ```
-verity/
-├── README.md           # This file
-├── CONTEXT.md          # Project background & requirements
-├── TECH.md             # Technology stack & architecture
-├── PROGRESS.md         # Implementation roadmap
-├── backend/            # Flask/FastAPI server
-├── frontend/           # React web interface
-├── agents/             # AI agent logic using Steel.dev
-└── tests/              # Test suite
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+playwright install chromium
 ```
 
-## 🎓 Team & Attribution
+Copy `.env.example` to `.env` and fill in a [Steel.dev](https://steel.dev) key and an
+[OpenRouter](https://openrouter.ai) key.
 
-Built by the team for Battle of the Schools 2026
+## Run
 
-## 📝 License
+```
+.venv\Scripts\python.exe app.py
+```
 
-MIT License
+Then open <http://localhost:5001>.
+
+Each stage of the run streams to the browser as it happens, so you can watch the agent query
+engines, open sources, and go hunting for counter-evidence.
+
+## Run it from the terminal instead
+
+Any stage works standalone, which is handy for debugging:
+
+```
+.venv\Scripts\python.exe pipeline.py "are electric vehicles better for the environment"
+.venv\Scripts\python.exe discover.py "is nuclear power safe"
+.venv\Scripts\python.exe independence.py "is nuclear power safe"
+```
+
+## Layout
+
+| File | Job |
+| --- | --- |
+| `browser.py` | Steel cloud browser sessions |
+| `plan.py` | Question decomposition, counter-search planning |
+| `discover.py` | Multi-engine, multi-query source discovery |
+| `fetch.py` | Parallel full-text reading + outbound link extraction |
+| `analyze.py` | First-pass source classification, stance distribution |
+| `independence.py` | Source clustering from real citations (no LLM) |
+| `synthesize.py` | Final answer, evidence map, perspectives, missing |
+| `pipeline.py` | The whole run, as a stream of progress events |
+| `app.py` | Flask + server-sent events |
+
+## Known limits
+
+- Roughly a third of pages block automated readers (publisher portals especially). Verity
+  overfetches candidates to compensate and tells you what it skipped and why.
+- Source labels, stances and evidence ratings are AI judgements and can be wrong. Every source
+  links out so you can check the original.
+- Independence analysis only sees links a page actually published. Uncredited reuse is
+  invisible to it, so it reports what sources "appear to share" rather than asserting lineage.
+- A run takes 60-90 seconds because it reads a dozen pages and makes three LLM passes.

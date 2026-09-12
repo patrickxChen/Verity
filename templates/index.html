@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verity - Search Beyond the Obvious</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Paragone';
+            src: url('/static/ParagoneFancyAestheticSerif-lx0O0.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Paragone', serif;
+            background: url('/static/images (10).jpg') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            filter: contrast(1.5) brightness(1.15) saturate(1.3);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #2d2d2d;
+            background: #252525;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 70px);
+            padding: 3rem 2rem;
+        }
+
+        .hero h1 {
+            font-family: 'Paragone', serif;
+            font-size: 6rem;
+            font-weight: 400;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(100, 200, 255, 0.6);
+        }
+
+        /* Search Box */
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .search-box {
+            width: 100%;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            background: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:hover {
+            border-color: #4d4d4d;
+        }
+
+        .search-box:focus-within {
+            border-color: #5d5d5d;
+        }
+
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            color: #e0e0e0;
+            font-family: 'Paragone', serif;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+        }
+
+        .search-box input::placeholder {
+            color: #666666;
+        }
+
+        .search-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #888888;
+            font-size: 1.1rem;
+            padding: 0 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .search-btn:hover {
+            color: #e0e0e0;
+        }
+
+        /* Results Section */
+        .results-section {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .results-header {
+            margin-bottom: 2rem;
+        }
+
+        .results-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .results-meta {
+            color: #888888;
+            font-size: 0.9rem;
+        }
+
+        /* Progress Stream */
+        .progress-stream {
+            margin-bottom: 2rem;
+            background: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            padding: 1.25rem;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: #b0b0b0;
+            font-size: 0.95rem;
+        }
+
+        .progress-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .progress-spinner {
+            min-width: 20px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #4d4d4d;
+            border-top-color: #bb86fc;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .progress-item.done .progress-spinner {
+            animation: none;
+            border: none;
+            color: #10b981;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Evidence Map */
+        .evidence-container {
+            margin-top: 2rem;
+        }
+
+        .evidence-section {
+            margin-bottom: 2rem;
+        }
+
+        .evidence-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .evidence-item {
+            background: #2d2d2d;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .source-title {
+            font-weight: 600;
+            color: #bb86fc;
+            margin-bottom: 0.5rem;
+        }
+
+        .source-meta {
+            color: #888888;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .source-snippet {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .results-section {
+                padding: 0 1rem;
+            }
+        }
+
+        /* Loading dots */
+        .loading-dots {
+            display: inline-flex;
+            gap: 0.3rem;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #888888;
+            animation: bounce 1.4s infinite;
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 60%, 100% {
+                opacity: 0.3;
+            }
+            30% {
+                opacity: 1;
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #888888;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Verity</div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero" id="heroSection">
+        <h1>Verity</h1>
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search unbiasedly...">
+                <button class="search-btn" id="searchBtn">🔍</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section" id="resultsSection">
+        <div class="results-header">
+            <h2 id="resultsTitle">Analyzing...</h2>
+            <div class="results-meta" id="resultsMeta"></div>
+        </div>
+
+        <!-- Progress Stream -->
+        <div class="progress-stream" id="progressStream"></div>
+
+        <!-- Evidence Map -->
+        <div class="evidence-container" id="evidenceContainer" style="display: none;">
+            <div class="evidence-section" id="perspectivesSection"></div>
+            <div class="evidence-section" id="missingSection"></div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState">
+        <p>Search to find evidence beyond the obvious</p>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const heroSection = document.getElementById('heroSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const progressStream = document.getElementById('progressStream');
+        const emptyState = document.getElementById('emptyState');
+        const resultsTitle = document.getElementById('resultsTitle');
+        const resultsMeta = document.getElementById('resultsMeta');
+        const perspectivesSection = document.getElementById('perspectivesSection');
+        const missingSection = document.getElementById('missingSection');
+        const evidenceContainer = document.getElementById('evidenceContainer');
+
+        let progressItems = {};
+
+        function performSearch() {
+            const query = searchInput.value.trim();
+
+            if (!query) {
+                resultsSection.classList.remove('active');
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            // Hide hero and show results
+            heroSection.style.display = 'none';
+            emptyState.style.display = 'none';
+            resultsSection.classList.add('active');
+            progressStream.innerHTML = '';
+            progressItems = {};
+
+            resultsTitle.textContent = `Searching: "${query}"`;
+            resultsMeta.textContent = 'Investigating across multiple sources...';
+
+            // Connect to server-sent events
+            const eventSource = new EventSource(`/api/search?q=${encodeURIComponent(query)}`);
+
+            eventSource.addEventListener('status', (event) => {
+                const data = JSON.parse(event.data);
+                updateProgress(data);
+            });
+
+            eventSource.addEventListener('result', (event) => {
+                const data = JSON.parse(event.data);
+                displayResults(data);
+            });
+
+            eventSource.addEventListener('error_msg', (event) => {
+                const error = event.data;
+                resultsTitle.textContent = 'Error';
+                resultsMeta.textContent = error;
+                eventSource.close();
+            });
+
+            eventSource.addEventListener('done', () => {
+                eventSource.close();
+            });
+        }
+
+        function updateProgress(status) {
+            const key = status.stage || status;
+
+            if (!progressItems[key]) {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+                item.id = `progress-${key}`;
+                item.innerHTML = `
+                    <div class="progress-spinner"></div>
+                    <span>${status.message || key}</span>
+                `;
+                progressStream.appendChild(item);
+                progressItems[key] = item;
+            }
+
+            if (status.complete) {
+                progressItems[key].classList.add('done');
+                progressItems[key].querySelector('.progress-spinner').innerHTML = '✓';
+            }
+        }
+
+        function displayResults(data) {
+            // Update title with answer
+            if (data.answer) {
+                resultsTitle.textContent = data.answer;
+            }
+
+            // Display perspectives
+            if (data.perspectives) {
+                perspectivesSection.innerHTML = '<h3>Perspectives</h3>';
+                data.perspectives.forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = 'evidence-item';
+                    item.innerHTML = `
+                        <div class="source-title">${p.position || 'View'}</div>
+                        <div class="source-meta">Supporting sources: ${p.count || 1}</div>
+                        <div class="source-snippet">${p.summary || ''}</div>
+                    `;
+                    perspectivesSection.appendChild(item);
+                });
+                evidenceContainer.style.display = 'block';
+            }
+
+            // Display missing evidence
+            if (data.missing) {
+                missingSection.innerHTML = '<h3>Missing Evidence</h3>';
+                data.missing.forEach(m => {
+                    const item = document.createElement('div');
+                    item.className = 'evidence-item';
+                    item.innerHTML = `
+                        <div class="source-title">${m.query}</div>
+                        <div class="source-snippet">${m.reasoning || ''}</div>
+                    `;
+                    missingSection.appendChild(item);
+                });
+            }
+        }
+
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        searchInput.focus();
+    </script>
+</body>
+</html>
