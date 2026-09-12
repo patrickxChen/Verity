@@ -159,7 +159,7 @@ def _discover_one_query(args):
         return query, []
 
 
-def discover_for_queries(queries, per_engine=6, workers=3, on_event=None):
+def discover_for_queries(queries, per_engine=3, workers=3, on_event=None):
     """Searches several queries at once, each in its own browser, and merges the results.
 
     Every source keeps a record of which queries and engines surfaced it — useful signal,
