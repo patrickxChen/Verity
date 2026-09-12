@@ -39,34 +39,10 @@
     --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
   }
 
-  /* Dark Instrument: a lab display at night, not an inversion. The cobalt and rust both
-     lift in lightness so they stay legible on a dark ground, and the neutrals keep their
-     slight cyan bias so the greys still read as chosen rather than default. */
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0C1418;
-      --surface: #131F25;
-      --surface-2: #1A2830;
-      --ink: #E3ECF0;
-      --ink-muted: #98AEB8;
-      --ink-faint: #6B8290;
-      --line: #223038;
-      --line-strong: #35474F;
-      --accent: #6FA9E8;
-      --accent-soft: #13253C;
-      --pos-a: #6FA9E8;
-      --pos-a-soft: #13253C;
-      --pos-b: #D98A5A;
-      --pos-b-soft: #2B1D14;
-      --flag: #D2A75E;
-      --flag-soft: #2A2114;
-      --flag-line: #4E3E1C;
-      --error: #E58374;
-      --error-soft: #2D1A17;
-    }
-  }
-
-  /* Same set again, so an explicit dark choice beats a light OS setting. */
+  /* Verity commits to the light Instrument look and does NOT follow the viewer's OS theme.
+     That's deliberate: a demo shouldn't change appearance because the laptop it's plugged
+     into happens to be set to dark mode. The dark palette below stays available, but only
+     when something explicitly stamps data-theme="dark" on the root — nothing does today. */
   :root[data-theme="dark"] {
     --bg: #0C1418;
     --surface: #131F25;
