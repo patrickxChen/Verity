@@ -4,55 +4,89 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Verity — Search beyond the obvious</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;600&display=swap">
 <style>
+  /* Instrument: one type family across every role, a cobalt accent, hairline rules and
+     tight 4px corners. Verity claims to measure how strong evidence is, so it should read
+     like an instrument's readout rather than a magazine. Uppercase micro-labels are set in
+     mono throughout — that's the signature of the whole design. */
   :root {
-    --bg: #F6F8F9;
+    --bg: #F7F9FA;
     --surface: #FFFFFF;
-    --surface-2: #EEF2F4;
-    --ink: #111A22;
-    --ink-muted: #52616D;
-    --ink-faint: #8494A0;
-    --line: #DCE3E8;
-    --line-strong: #C3CED6;
-    --accent: #0D6E72;
-    --accent-soft: #E0EEEE;
+    --surface-2: #EDF2F4;
+    --ink: #0E1A1F;
+    --ink-muted: #4E626B;
+    --ink-faint: #7F9099;
+    --line: #D7E1E5;
+    --line-strong: #BAC8CE;
+    --accent: #1B4FA0;
+    --accent-soft: #E2EAF6;
     /* Opposing positions get two equal-weight hues on purpose. Green-vs-red would tell the
        reader which side is right, which is the opposite of the point of this product. */
-    --pos-a: #0D6E72;
-    --pos-a-soft: #E0EEEE;
-    --pos-b: #A2572A;
-    --pos-b-soft: #F7EBE0;
-    --flag: #8A5A16;
-    --flag-soft: #FBF1E0;
-    --flag-line: #E4C892;
+    --pos-a: #1B4FA0;
+    --pos-a-soft: #E2EAF6;
+    --pos-b: #9C4A1E;
+    --pos-b-soft: #F6E8DF;
+    --flag: #84551A;
+    --flag-soft: #FAF0DE;
+    --flag-line: #E0C48E;
     --error: #A32F1B;
     --error-soft: #FAE9E6;
-    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
-    --sans: -apple-system, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+    --radius: 4px;
+    --radius-lg: 6px;
+    --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+    --sans: "IBM Plex Sans", -apple-system, "Segoe UI", ui-sans-serif, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
   }
 
+  /* Dark Instrument: a lab display at night, not an inversion. The cobalt and rust both
+     lift in lightness so they stay legible on a dark ground, and the neutrals keep their
+     slight cyan bias so the greys still read as chosen rather than default. */
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0D1318;
-      --surface: #151D24;
-      --surface-2: #1C262D;
-      --ink: #E9EEF2;
-      --ink-muted: #9EADB8;
-      --ink-faint: #6C7D89;
-      --line: #253038;
-      --line-strong: #35434D;
-      --accent: #4EC3C5;
-      --accent-soft: #123130;
-      --pos-a: #4EC3C5;
-      --pos-a-soft: #123130;
-      --pos-b: #DB9560;
-      --pos-b-soft: #31221A;
-      --flag: #D9A65F;
-      --flag-soft: #2D2416;
-      --flag-line: #53421F;
+      --bg: #0C1418;
+      --surface: #131F25;
+      --surface-2: #1A2830;
+      --ink: #E3ECF0;
+      --ink-muted: #98AEB8;
+      --ink-faint: #6B8290;
+      --line: #223038;
+      --line-strong: #35474F;
+      --accent: #6FA9E8;
+      --accent-soft: #13253C;
+      --pos-a: #6FA9E8;
+      --pos-a-soft: #13253C;
+      --pos-b: #D98A5A;
+      --pos-b-soft: #2B1D14;
+      --flag: #D2A75E;
+      --flag-soft: #2A2114;
+      --flag-line: #4E3E1C;
       --error: #E58374;
       --error-soft: #2D1A17;
     }
+  }
+
+  /* Same set again, so an explicit dark choice beats a light OS setting. */
+  :root[data-theme="dark"] {
+    --bg: #0C1418;
+    --surface: #131F25;
+    --surface-2: #1A2830;
+    --ink: #E3ECF0;
+    --ink-muted: #98AEB8;
+    --ink-faint: #6B8290;
+    --line: #223038;
+    --line-strong: #35474F;
+    --accent: #6FA9E8;
+    --accent-soft: #13253C;
+    --pos-a: #6FA9E8;
+    --pos-a-soft: #13253C;
+    --pos-b: #D98A5A;
+    --pos-b-soft: #2B1D14;
+    --flag: #D2A75E;
+    --flag-soft: #2A2114;
+    --flag-line: #4E3E1C;
+    --error: #E58374;
+    --error-soft: #2D1A17;
   }
 
   * { box-sizing: border-box; }
@@ -88,10 +122,11 @@
   .masthead.compact .wordmark { font-size: 1.5rem; }
 
   .tagline {
-    font-family: var(--serif);
-    font-size: 1.1rem;
+    font-family: var(--mono);
+    font-size: 0.88rem;
+    letter-spacing: 0.02em;
     color: var(--ink-muted);
-    margin: 12px 0 0;
+    margin: 14px 0 0;
   }
   .masthead.compact .tagline { display: none; }
 
@@ -117,7 +152,7 @@
     font-size: 1rem;
     font-family: var(--sans);
     border: 1px solid var(--line-strong);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     background: var(--surface);
     color: var(--ink);
   }
@@ -129,7 +164,7 @@
     font-weight: 600;
     font-family: var(--sans);
     border: none;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     background: var(--ink);
     color: var(--bg);
     cursor: pointer;
@@ -163,7 +198,7 @@
   .progress {
     margin-top: 30px;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: var(--surface);
     padding: 18px 20px;
     display: none;
@@ -186,7 +221,7 @@
   .error-box {
     margin-top: 24px; padding: 15px 18px;
     border: 1px solid var(--error); background: var(--error-soft);
-    color: var(--error); border-radius: 12px; font-size: 0.9rem; display: none;
+    color: var(--error); border-radius: var(--radius-lg); font-size: 0.9rem; display: none;
   }
   .error-box.visible { display: block; }
 
@@ -196,6 +231,7 @@
 
   .section { margin-bottom: 44px; }
   .section-label {
+    font-family: var(--mono);
     font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.13em;
     font-weight: 700; color: var(--ink-faint);
     padding-bottom: 9px; border-bottom: 1px solid var(--line); margin-bottom: 18px;
@@ -206,8 +242,8 @@
   .answer p { margin: 0 0 16px; }
 
   .cite {
+    font-family: var(--mono);
     display: inline-block;
-    font-family: var(--sans);
     font-size: 0.68rem;
     font-weight: 700;
     min-width: 17px;
@@ -230,18 +266,19 @@
     padding: 14px 16px;
     background: var(--surface-2);
     border-left: 3px solid var(--accent);
-    border-radius: 0 8px 8px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
     font-family: var(--serif);
     font-size: 1rem;
   }
 
   /* ---------- evidence ---------- */
   .claim {
-    border: 1px solid var(--line); border-radius: 12px;
+    border: 1px solid var(--line); border-radius: var(--radius-lg);
     background: var(--surface); padding: 16px 18px; margin-bottom: 12px;
   }
   .claim-text { font-family: var(--serif); font-size: 1.02rem; margin-bottom: 10px; }
   .strength {
+    font-family: var(--mono);
     display: inline-flex; align-items: center; gap: 6px;
     font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em;
     font-weight: 700; padding: 3px 9px; border-radius: 5px; margin-bottom: 8px;
@@ -255,13 +292,14 @@
 
   .ev-row { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; }
   .ev-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .ev-label { color: var(--ink-faint); text-transform: uppercase; font-size: 0.66rem; letter-spacing: 0.07em; font-weight: 700; }
+  .ev-label {
+    font-family: var(--mono); color: var(--ink-faint); text-transform: uppercase; font-size: 0.66rem; letter-spacing: 0.07em; font-weight: 700; }
   .caveats { margin: 10px 0 0; padding-left: 18px; font-size: 0.84rem; color: var(--ink-muted); }
 
   /* ---------- perspectives ---------- */
   .persp {
     border: 1px solid var(--line); border-left: 3px solid var(--line-strong);
-    border-radius: 0 12px 12px 0; background: var(--surface);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0; background: var(--surface);
     padding: 16px 18px; margin-bottom: 12px;
   }
   .persp:nth-child(odd) { border-left-color: var(--pos-a); }
@@ -273,7 +311,7 @@
 
   /* ---------- missing perspectives (the headline feature) ---------- */
   .missing-panel {
-    border: 1px solid var(--flag-line); border-radius: 14px;
+    border: 1px solid var(--flag-line); border-radius: var(--radius-lg);
     background: var(--flag-soft); padding: 20px 22px;
   }
   .missing-head { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
@@ -297,7 +335,7 @@
 
   .missing-item {
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
+    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px;
   }
   .missing-topic { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
 
@@ -305,7 +343,7 @@
   .hidden-extra.shown { display: block; }
   .reveal-btn {
     margin-top: 6px; padding: 11px 18px; font-size: 0.87rem; font-weight: 600;
-    font-family: var(--sans); border-radius: 10px; cursor: pointer;
+    font-family: var(--sans); border-radius: var(--radius); cursor: pointer;
     background: var(--flag); color: var(--surface); border: none;
   }
   .reveal-btn:hover { opacity: 0.9; }
@@ -314,23 +352,25 @@
   .indep-summary {
     font-family: var(--serif); font-size: 1.02rem;
     padding: 16px 18px; background: var(--surface);
-    border: 1px solid var(--line); border-radius: 12px; margin-bottom: 16px;
+    border: 1px solid var(--line); border-radius: var(--radius-lg); margin-bottom: 16px;
   }
   .funnel { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
   .funnel-step {
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: 10px; padding: 10px 16px; text-align: center; min-width: 118px;
+    border-radius: var(--radius); padding: 10px 16px; text-align: center; min-width: 118px;
   }
-  .funnel-n { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .funnel-l { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); font-weight: 700; }
+  .funnel-n { font-family: var(--mono); font-size: 1.5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .funnel-l {
+    font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); font-weight: 700; }
   .funnel-arrow { color: var(--ink-faint); font-size: 1.1rem; }
 
   .cluster {
-    border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface);
     padding: 14px 16px; margin-bottom: 10px;
   }
   .cluster-root { font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; word-break: break-all; }
-  .cluster-kind { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); font-weight: 700; margin-bottom: 10px; }
+  .cluster-kind {
+    font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); font-weight: 700; margin-bottom: 10px; }
   .cluster-members { margin: 0; padding: 0; list-style: none; }
   .cluster-members li {
     font-size: 0.85rem; color: var(--ink-muted);
@@ -344,12 +384,13 @@
 
   /* ---------- sources ---------- */
   .source {
-    border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface);
     padding: 16px 18px; margin-bottom: 10px; scroll-margin-top: 20px;
   }
   .source:target { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   .source-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
   .source-n {
+    font-family: var(--mono);
     font-size: 0.7rem; font-weight: 700; min-width: 20px; height: 20px; line-height: 18px;
     text-align: center; border-radius: 5px; background: var(--accent-soft);
     color: var(--accent); border: 1px solid var(--accent);
@@ -357,6 +398,7 @@
   .source-domain { font-weight: 700; font-size: 0.92rem; color: var(--ink); text-decoration: none; }
   .source-domain:hover { color: var(--accent); text-decoration: underline; }
   .badge {
+    font-family: var(--mono);
     font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
     padding: 2px 8px; border-radius: 4px; border: 1px solid var(--line-strong);
     color: var(--ink-muted); background: var(--surface-2);
@@ -365,19 +407,20 @@
   .badge.primary { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
   .source-title { font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 7px; }
   .source-summary { font-family: var(--serif); font-size: 0.97rem; margin-bottom: 9px; }
-  .stake { font-size: 0.82rem; color: var(--ink-muted); padding: 8px 12px; border-radius: 8px; background: var(--surface-2); }
+  .stake { font-size: 0.82rem; color: var(--ink-muted); padding: 8px 12px; border-radius: var(--radius); background: var(--surface-2); }
   .stake.flagged {
     background: var(--flag-soft); color: var(--flag);
     border-left: 3px solid var(--flag); font-weight: 600;
   }
   .stake-label {
+    font-family: var(--mono);
     text-transform: uppercase; font-size: 0.64rem; letter-spacing: 0.08em;
     font-weight: 700; display: block; margin-bottom: 2px; opacity: 0.85;
   }
 
   /* ---------- disclosure panels ---------- */
   details {
-    border: 1px solid var(--line); border-radius: 12px;
+    border: 1px solid var(--line); border-radius: var(--radius-lg);
     background: var(--surface); padding: 0 18px; margin-bottom: 10px;
   }
   details[open] { padding-bottom: 16px; }
@@ -390,9 +433,10 @@
   details[open] summary::before { content: "\2212 "; }
   .why-col { margin: 0; padding-left: 20px; font-size: 0.87rem; }
   .why-col li { margin-bottom: 5px; }
-  .why-head { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--ink-faint); margin: 10px 0 6px; }
+  .why-head {
+    font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--ink-faint); margin: 10px 0 6px; }
   .statgrid { display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.84rem; }
-  .statgrid div { background: var(--surface-2); border-radius: 8px; padding: 8px 12px; }
+  .statgrid div { background: var(--surface-2); border-radius: var(--radius); padding: 8px 12px; }
   .statgrid b { font-variant-numeric: tabular-nums; }
 
   .footnote {
