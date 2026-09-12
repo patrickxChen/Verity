@@ -247,55 +247,60 @@
     font-size: 1rem;
   }
 
+  /* Hierarchy rule for everything below: a border or a fill means "this is a separate
+     object, look here". Spent on every block it flattens into noise, so only the missing-
+     perspectives panel gets a fill. Everything else is separated by hairlines and spacing,
+     which is enough, and lets the answer stay the loudest thing on the page. */
+
   /* ---------- evidence ---------- */
-  .claim {
-    border: 1px solid var(--line); border-radius: var(--radius-lg);
-    background: var(--surface); padding: 16px 18px; margin-bottom: 12px;
-  }
-  .claim-text { font-family: var(--serif); font-size: 1.02rem; margin-bottom: 10px; }
+  .claim { padding: 16px 0; border-top: 1px solid var(--line); }
+  .claim:first-of-type { border-top: none; padding-top: 2px; }
+  .claim-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .claim-text { font-family: var(--serif); font-size: 1.04rem; flex: 1; }
   .strength {
     font-family: var(--mono);
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em;
-    font-weight: 700; padding: 3px 9px; border-radius: 5px; margin-bottom: 8px;
+    font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.09em;
+    font-weight: 600; white-space: nowrap; padding-top: 3px;
   }
-  .strength.Strong { background: var(--accent); color: var(--surface); }
-  .strength.Moderate { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
-  .strength.Limited { background: var(--surface-2); color: var(--ink-muted); border: 1px solid var(--line-strong); }
-  .strength.Conflicting { background: var(--pos-b-soft); color: var(--pos-b); border: 1px solid var(--pos-b); }
-  .strength.Insufficient { background: transparent; color: var(--ink-faint); border: 1px dashed var(--line-strong); }
-  .strength-why { font-size: 0.82rem; color: var(--ink-muted); margin-bottom: 10px; }
+  /* Strength is the one place a rating needs to read at a glance, so it's carried by colour
+     and weight alone — no pills, which would put a box back on every row. */
+  .strength.Strong { color: var(--accent); font-weight: 700; }
+  .strength.Moderate { color: var(--accent); }
+  .strength.Limited { color: var(--ink-faint); }
+  .strength.Conflicting { color: var(--pos-b); font-weight: 700; }
+  .strength.Insufficient { color: var(--ink-faint); }
+  .strength-why { font-size: 0.83rem; color: var(--ink-muted); }
 
-  .ev-row { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; }
-  .ev-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .ev-row { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; margin-top: 9px; align-items: center; }
+  .ev-group { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
   .ev-label {
-    font-family: var(--mono); color: var(--ink-faint); text-transform: uppercase; font-size: 0.66rem; letter-spacing: 0.07em; font-weight: 700; }
-  .caveats { margin: 10px 0 0; padding-left: 18px; font-size: 0.84rem; color: var(--ink-muted); }
+    font-family: var(--mono); color: var(--ink-faint); text-transform: uppercase;
+    font-size: 0.64rem; letter-spacing: 0.07em; font-weight: 600; }
+  .caveat { margin: 8px 0 0; font-size: 0.83rem; color: var(--ink-muted); }
 
   /* ---------- perspectives ---------- */
-  .persp {
-    border: 1px solid var(--line); border-left: 3px solid var(--line-strong);
-    border-radius: 0 var(--radius-lg) var(--radius-lg) 0; background: var(--surface);
-    padding: 16px 18px; margin-bottom: 12px;
+  .persp { padding: 15px 0 15px 14px; border-left: 2px solid var(--line-strong); margin-bottom: 2px; }
+  .persp.a { border-left-color: var(--pos-a); }
+  .persp.b { border-left-color: var(--pos-b); }
+  .persp-name {
+    font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase;
+    letter-spacing: 0.09em; font-weight: 600; color: var(--ink-faint); margin-bottom: 6px;
   }
-  .persp:nth-child(odd) { border-left-color: var(--pos-a); }
-  .persp:nth-child(even) { border-left-color: var(--pos-b); }
-  .persp-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 7px; }
-  .persp-arg { font-family: var(--serif); font-size: 1rem; margin-bottom: 8px; }
-  .kv { font-size: 0.84rem; color: var(--ink-muted); margin-bottom: 5px; }
-  .kv b { color: var(--ink); font-weight: 600; }
+  .persp-arg { font-family: var(--serif); font-size: 1rem; margin-bottom: 6px; }
+  .kv { font-size: 0.83rem; color: var(--ink-muted); margin-bottom: 3px; }
+  .kv b { color: var(--ink-muted); font-weight: 600; }
 
-  /* ---------- missing perspectives (the headline feature) ---------- */
+  /* ---------- missing perspectives: the one block that gets a fill ---------- */
   .missing-panel {
     border: 1px solid var(--flag-line); border-radius: var(--radius-lg);
     background: var(--flag-soft); padding: 20px 22px;
   }
-  .missing-head { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
-  .missing-sub { font-size: 0.9rem; color: var(--ink-muted); margin-bottom: 18px; }
+  .missing-head { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; margin-bottom: 6px; }
+  .missing-sub { font-size: 0.88rem; color: var(--ink-muted); margin-bottom: 16px; }
 
   .distbar {
-    display: flex; height: 12px; border-radius: 999px; overflow: hidden;
-    border: 1px solid var(--line-strong); margin-bottom: 8px; background: var(--surface);
+    display: flex; height: 8px; border-radius: 999px; overflow: hidden;
+    margin-bottom: 7px; background: var(--surface);
   }
   .distbar span { display: block; }
   .dist-Supportive { background: var(--pos-a); }
@@ -303,121 +308,115 @@
   .dist-Mixed { background: var(--ink-faint); }
   .dist-Neutral { background: var(--line-strong); }
   .dist-Unclear { background: var(--surface-2); }
-  .dist-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.76rem; color: var(--ink-muted); margin-bottom: 18px; }
-  .dist-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
-
-  .gap-list { margin: 0 0 18px; padding-left: 20px; font-size: 0.88rem; color: var(--ink); }
-  .gap-list li { margin-bottom: 4px; }
-
-  .missing-item {
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px;
+  .dist-legend {
+    display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px;
+    font-family: var(--mono); font-size: 0.68rem; color: var(--ink-muted);
   }
-  .missing-topic { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+  .dist-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; }
+
+  .gap-list { margin: 4px 0 0; padding-left: 18px; font-size: 0.85rem; color: var(--ink-muted); }
+  .gap-list li { margin-bottom: 3px; }
+
+  .missing-item { padding: 14px 0; border-top: 1px solid var(--flag-line); }
+  .missing-topic { font-family: var(--serif); font-weight: 600; font-size: 1rem; margin-bottom: 5px; }
 
   .hidden-extra { display: none; }
   .hidden-extra.shown { display: block; }
   .reveal-btn {
-    margin-top: 6px; padding: 11px 18px; font-size: 0.87rem; font-weight: 600;
+    margin-top: 14px; padding: 9px 16px; font-size: 0.82rem; font-weight: 600;
     font-family: var(--sans); border-radius: var(--radius); cursor: pointer;
-    background: var(--flag); color: var(--surface); border: none;
+    background: transparent; color: var(--flag); border: 1px solid var(--flag);
   }
-  .reveal-btn:hover { opacity: 0.9; }
+  .reveal-btn:hover { background: var(--flag); color: var(--surface); }
 
   /* ---------- source independence ---------- */
-  .indep-summary {
-    font-family: var(--serif); font-size: 1.02rem;
-    padding: 16px 18px; background: var(--surface);
-    border: 1px solid var(--line); border-radius: var(--radius-lg); margin-bottom: 16px;
+  .indep-summary { font-family: var(--serif); font-size: 1.02rem; margin-bottom: 20px; }
+  .funnel {
+    display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap;
+    padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid var(--line);
   }
-  .funnel { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
-  .funnel-step {
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 10px 16px; text-align: center; min-width: 118px;
+  .funnel-step { text-align: left; }
+  .funnel-n {
+    font-family: var(--mono); font-size: 1.9rem; font-weight: 600;
+    font-variant-numeric: tabular-nums; line-height: 1; color: var(--ink);
   }
-  .funnel-n { font-family: var(--mono); font-size: 1.5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
   .funnel-l {
-    font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); font-weight: 700; }
-  .funnel-arrow { color: var(--ink-faint); font-size: 1.1rem; }
+    font-family: var(--mono); font-size: 0.64rem; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--ink-faint); font-weight: 600; margin-top: 5px; }
+  .funnel-arrow { color: var(--line-strong); font-size: 1.1rem; align-self: center; }
 
-  .cluster {
-    border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface);
-    padding: 14px 16px; margin-bottom: 10px;
+  .cluster { padding: 12px 0; border-top: 1px solid var(--line); }
+  .cluster:first-of-type { border-top: none; }
+  .cluster-root {
+    font-family: var(--mono); font-size: 0.8rem; font-weight: 600;
+    margin-bottom: 6px; word-break: break-all; color: var(--ink);
   }
-  .cluster-root { font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; word-break: break-all; }
   .cluster-kind {
-    font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); font-weight: 700; margin-bottom: 10px; }
-  .cluster-members { margin: 0; padding: 0; list-style: none; }
+    font-family: var(--mono); font-size: 0.64rem; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--ink-faint); font-weight: 600; margin-bottom: 5px; }
+  .cluster-members { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 5px; }
   .cluster-members li {
-    font-size: 0.85rem; color: var(--ink-muted);
-    padding: 4px 0 4px 18px; border-left: 2px solid var(--line-strong); margin-left: 6px;
-    position: relative;
-  }
-  .cluster-members li::before {
-    content: ""; position: absolute; left: 0; top: 50%;
-    width: 12px; height: 2px; background: var(--line-strong);
+    font-size: 0.78rem; color: var(--ink-muted);
+    background: var(--surface-2); border-radius: var(--radius); padding: 2px 8px;
   }
 
-  /* ---------- sources ---------- */
-  .source {
-    border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface);
-    padding: 16px 18px; margin-bottom: 10px; scroll-margin-top: 20px;
-  }
-  .source:target { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .source-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  /* ---------- sources: compact rows, not cards ---------- */
+  .source { padding: 14px 0; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+  .source:first-of-type { border-top: none; }
+  .source:target { background: var(--accent-soft); box-shadow: -14px 0 0 var(--accent-soft), 14px 0 0 var(--accent-soft); }
+  .source-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
   .source-n {
     font-family: var(--mono);
-    font-size: 0.7rem; font-weight: 700; min-width: 20px; height: 20px; line-height: 18px;
-    text-align: center; border-radius: 5px; background: var(--accent-soft);
+    font-size: 0.68rem; font-weight: 600; min-width: 19px; height: 19px; line-height: 17px;
+    text-align: center; border-radius: var(--radius); background: var(--accent-soft);
     color: var(--accent); border: 1px solid var(--accent);
   }
-  .source-domain { font-weight: 700; font-size: 0.92rem; color: var(--ink); text-decoration: none; }
+  .source-domain { font-weight: 600; font-size: 0.9rem; color: var(--ink); text-decoration: none; }
   .source-domain:hover { color: var(--accent); text-decoration: underline; }
+  /* Source metadata reads as one quiet mono string rather than three separate pills. */
   .badge {
     font-family: var(--mono);
-    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
-    padding: 2px 8px; border-radius: 4px; border: 1px solid var(--line-strong);
-    color: var(--ink-muted); background: var(--surface-2);
+    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
+    color: var(--ink-faint);
   }
-  .badge.counter { border-color: var(--flag-line); color: var(--flag); background: var(--flag-soft); }
-  .badge.primary { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-  .source-title { font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 7px; }
-  .source-summary { font-family: var(--serif); font-size: 0.97rem; margin-bottom: 9px; }
-  .stake { font-size: 0.82rem; color: var(--ink-muted); padding: 8px 12px; border-radius: var(--radius); background: var(--surface-2); }
-  .stake.flagged {
-    background: var(--flag-soft); color: var(--flag);
-    border-left: 3px solid var(--flag); font-weight: 600;
-  }
+  .badge::before { content: "· "; color: var(--line-strong); }
+  .badge.counter { color: var(--flag); }
+  .badge.primary { color: var(--accent); }
+  .source-summary { font-size: 0.88rem; color: var(--ink-muted); margin-bottom: 6px; }
+  .stake { font-size: 0.82rem; color: var(--ink-muted); }
+  .stake.flagged { color: var(--flag); padding-left: 10px; border-left: 2px solid var(--flag); }
   .stake-label {
     font-family: var(--mono);
-    text-transform: uppercase; font-size: 0.64rem; letter-spacing: 0.08em;
-    font-weight: 700; display: block; margin-bottom: 2px; opacity: 0.85;
+    text-transform: uppercase; font-size: 0.62rem; letter-spacing: 0.08em;
+    font-weight: 600; margin-right: 6px; opacity: 0.85;
   }
 
   /* ---------- disclosure panels ---------- */
-  details {
-    border: 1px solid var(--line); border-radius: var(--radius-lg);
-    background: var(--surface); padding: 0 18px; margin-bottom: 10px;
-  }
+  details { border-top: 1px solid var(--line); }
+  details:last-of-type { border-bottom: 1px solid var(--line); }
   details[open] { padding-bottom: 16px; }
   summary {
-    cursor: pointer; padding: 14px 0; font-size: 0.88rem; font-weight: 600;
-    list-style: none;
+    cursor: pointer; padding: 13px 0; font-size: 0.86rem; font-weight: 600;
+    list-style: none; color: var(--ink-muted);
   }
+  summary:hover { color: var(--ink); }
   summary::-webkit-details-marker { display: none; }
-  summary::before { content: "+ "; color: var(--accent); font-weight: 700; }
+  summary::before { content: "+ "; color: var(--accent); font-weight: 700; font-family: var(--mono); }
   details[open] summary::before { content: "\2212 "; }
-  .why-col { margin: 0; padding-left: 20px; font-size: 0.87rem; }
-  .why-col li { margin-bottom: 5px; }
+  .why-col { margin: 0; padding-left: 18px; font-size: 0.86rem; color: var(--ink-muted); }
+  .why-col li { margin-bottom: 4px; }
   .why-head {
-    font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--ink-faint); margin: 10px 0 6px; }
-  .statgrid { display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.84rem; }
-  .statgrid div { background: var(--surface-2); border-radius: var(--radius); padding: 8px 12px; }
-  .statgrid b { font-variant-numeric: tabular-nums; }
+    font-family: var(--mono); font-size: 0.66rem; text-transform: uppercase;
+    letter-spacing: 0.08em; font-weight: 600; color: var(--ink-faint); margin: 12px 0 6px; }
+  .statgrid {
+    display: flex; flex-wrap: wrap; gap: 5px 20px;
+    font-family: var(--mono); font-size: 0.78rem; color: var(--ink-muted);
+  }
+  .statgrid b { font-variant-numeric: tabular-nums; color: var(--ink); }
 
   .footnote {
-    margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line);
-    font-size: 0.8rem; color: var(--ink-faint); line-height: 1.65;
+    margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line);
+    font-size: 0.78rem; color: var(--ink-faint); line-height: 1.6; max-width: 72ch;
   }
 
   @media (max-width: 640px) {
@@ -527,9 +526,8 @@
     const items = (d.missing || []).map(m => `
       <div class="missing-item">
         <div class="missing-topic">${esc(m.topic)}</div>
-        <div class="kv"><b>Why it matters:</b> ${esc(m.why_it_matters)}</div>
-        <div class="kv"><b>What Verity found:</b> ${esc(m.evidence)}</div>
-        <div class="ev-group"><span class="ev-label">Sources</span>${refChips(m.sources)}</div>
+        <div class="kv">${esc(m.why_it_matters)}</div>
+        <div class="kv"><b>Found:</b> ${esc(m.evidence)} ${refChips(m.sources)}</div>
       </div>`);
 
     const firstTwo = items.slice(0, 2).join("");
@@ -537,7 +535,7 @@
     const gaps = (d.counter_gaps || []).map(g => `<li>${esc(g)}</li>`).join("");
 
     const revealBtn = rest
-      ? `<button class="reveal-btn" id="reveal-missing" type="button">Explore all missing perspectives</button>
+      ? `<button class="reveal-btn" id="reveal-missing" type="button">Show ${items.length - 2} more</button>
          <div class="hidden-extra" id="missing-extra">${rest}</div>`
       : "";
 
@@ -547,18 +545,16 @@
         <div class="missing-panel">
           <div class="missing-head">You may be seeing an incomplete picture</div>
           <div class="missing-sub">
-            Verity's first pass of results leaned <b>${esc(d.initial_lean_text || "unknown")}</b>.
-            It then ran ${(d.counter_queries || []).length} further searches aimed specifically at
-            credible evidence that could qualify or overturn that conclusion.
+            The first pass of results leaned <b>${esc(d.initial_lean_text || "unknown")}</b>, so
+            Verity ran ${(d.counter_queries || []).length} more searches looking for evidence that
+            could overturn it. This doesn't mean both sides are equally right — it means these
+            came up short in the obvious results.
           </div>
           ${renderDistribution(d.initial_distribution)}
-          ${gaps ? `<div class="why-head">Gaps it went looking for</div><ul class="gap-list">${gaps}</ul>` : ""}
           ${firstTwo}
           ${revealBtn}
-          <p class="kv" style="margin-top:14px">
-            This does not mean both sides are equally correct. It means these are relevant
-            considerations the dominant results underplayed.
-          </p>
+          ${gaps ? `<details><summary>What it went looking for</summary>
+            <ul class="gap-list">${gaps}</ul></details>` : ""}
         </div>
       </div>`;
   }
@@ -604,9 +600,8 @@
         </div>
         <div class="indep-summary">${esc(indep.summary)}</div>
         ${clusters}${independent}
-        <p class="kv" style="margin-top:12px">
-          Computed from links these pages actually published — not inferred by a model. Click
-          any source to check it.
+        <p class="kv" style="margin-top:14px">
+          Measured from links these pages actually published — not inferred by a model.
         </p>
       </div>`;
   }
@@ -625,12 +620,10 @@
             <span class="badge">${esc(s.stance)}</span>
             ${s.from_counter_search ? '<span class="badge counter">Found by counter-search</span>' : ""}
           </div>
-          <div class="source-title">${esc(s.title)}</div>
           ${s.summary ? `<div class="source-summary">${esc(s.summary)}</div>` : ""}
-          ${s.interest ? `
-            <div class="stake ${hasStake ? "flagged" : ""}">
-              <span class="stake-label">${hasStake ? "Disclosed interest" : "Interest"}</span>
-              ${esc(s.interest)}
+          ${hasStake ? `
+            <div class="stake flagged">
+              <span class="stake-label">Interest</span>${esc(s.interest)}
             </div>` : ""}
         </div>`;
     }).join("");
@@ -642,24 +635,24 @@
 
     const claims = (d.claims || []).map(c => `
       <div class="claim">
-        <div class="strength ${esc(c.strength)}">${esc(c.strength)}</div>
-        <div class="claim-text">${esc(c.claim)}</div>
+        <div class="claim-head">
+          <div class="claim-text">${esc(c.claim)}</div>
+          <div class="strength ${esc(c.strength)}">${esc(c.strength)}</div>
+        </div>
         ${c.strength_reason ? `<div class="strength-why">${esc(c.strength_reason)}</div>` : ""}
         <div class="ev-row">
-          <div class="ev-group"><span class="ev-label">Supporting</span>${refChips(c.supporting)}</div>
-          <div class="ev-group"><span class="ev-label">Challenging</span>${refChips(c.challenging)}</div>
+          <div class="ev-group"><span class="ev-label">For</span>${refChips(c.supporting)}</div>
+          <div class="ev-group"><span class="ev-label">Against</span>${refChips(c.challenging)}</div>
         </div>
         ${(c.caveats || []).length
-          ? `<ul class="caveats">${c.caveats.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+          ? `<p class="caveat">${esc(c.caveats[0])}</p>` : ""}
       </div>`).join("");
 
-    const perspectives = (d.perspectives || []).map(p => `
-      <div class="persp">
+    const perspectives = (d.perspectives || []).map((p, i) => `
+      <div class="persp ${i % 2 === 0 ? "a" : "b"}">
         <div class="persp-name">${esc(p.name)}</div>
-        <div class="persp-arg">${esc(p.argument)}</div>
-        ${p.evidence ? `<div class="kv"><b>Based on:</b> ${esc(p.evidence)}</div>` : ""}
+        <div class="persp-arg">${esc(p.argument)} ${refChips(p.sources)}</div>
         ${p.caveat ? `<div class="kv"><b>Caveat:</b> ${esc(p.caveat)}</div>` : ""}
-        <div class="ev-group"><span class="ev-label">Sources</span>${refChips(p.sources)}</div>
       </div>`).join("");
 
     const uncertainties = (d.uncertainties || []).length
@@ -716,10 +709,9 @@
       ${renderSources(d.sources)}
 
       <p class="footnote">
-        Verity's analysis is generated by AI and may contain errors. Source labels, stances and
-        evidence ratings are judgements, not facts — every source links out so you can check the
-        original. Verity does not claim to be unbiased; it claims to show you what it looked at,
-        what it found, and what it went looking for on purpose.
+        Verity's analysis is AI-generated and can be wrong. Labels, stances and evidence ratings
+        are judgements, not facts — every source links out so you can check it. Verity doesn't
+        claim to be unbiased; it claims to show you what it looked at and what it went looking for.
       </p>`;
 
     const revealBtn = document.getElementById("reveal-missing");
