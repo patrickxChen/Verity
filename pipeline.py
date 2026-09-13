@@ -25,8 +25,8 @@ from independence import analyze_independence
 from plan import decompose, plan_counter_searches
 from synthesize import synthesize
 
-INITIAL_READ_LIMIT = 4
-COUNTER_READ_LIMIT = 2
+INITIAL_READ_LIMIT = 6
+COUNTER_READ_LIMIT = 3
 MIN_SOURCES = 2
 SEARCH_WORKERS = 3
 READ_WORKERS = 4
@@ -62,7 +62,7 @@ def run_verity(question):
 
     events = []
     initial = discover_for_queries(
-        queries, per_engine=3, workers=SEARCH_WORKERS, on_event=events.append
+        queries, per_engine=5, workers=SEARCH_WORKERS, on_event=events.append
     )
     for message in events:
         yield "status", message
@@ -116,7 +116,7 @@ def run_verity(question):
         seen_domains = {s["domain"] for s in read}
         counter_events = []
         counter_candidates = discover_for_queries(
-            counter_queries, per_engine=2, workers=SEARCH_WORKERS,
+            counter_queries, per_engine=3, workers=SEARCH_WORKERS,
             on_event=counter_events.append,
         )
         for message in counter_events:
