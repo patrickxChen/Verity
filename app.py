@@ -19,6 +19,11 @@ def index():
     return send_from_directory('.', 'index.html')
 
 
+@app.route("/health")
+def health():
+    return {"status": "ok"}
+
+
 @app.route("/api/search")
 def api_search():
     """Streams the run as server-sent events. EventSource can only issue GET requests, so the
