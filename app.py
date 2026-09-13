@@ -49,4 +49,4 @@ def api_search():
 
 if __name__ == "__main__":
     # threaded so the streaming request doesn't block the page from loading assets
-    app.run(debug=False, port=5001, threaded=True)
+    app.run(debug=False, host="0.0.0.0", port=5001, threaded=True)
