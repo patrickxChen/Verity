@@ -14,10 +14,12 @@ score, and the UI ships every label with a link so a reader can overrule it.
 """
 
 import json
+import os
 
+from dotenv import load_dotenv
 from openai import OpenAI
 
-from browser import OPENROUTER_API_KEY
+load_dotenv()
 
 # Both default to a cheap model that's known to work on this key. Synthesis is where output
 # quality actually shows, so ANALYSIS_MODEL is the first thing to upgrade if results look thin.
@@ -61,7 +63,8 @@ public fact. Unknown is an acceptable answer."""
 
 
 def _client():
-    return OpenAI(base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_API_KEY)
+    api_key = os.environ["OPENROUTER_API_KEY"]
+    return OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
 
 
 def _strip_fences(reply):
