@@ -412,6 +412,7 @@
     </div>
 
     <script>
+        const API_BASE_URL = window.VERITY_API_URL || '/api';
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
         const heroSection = document.getElementById('heroSection');
@@ -504,7 +505,7 @@
             resultsMeta.textContent = 'Investigating across multiple sources...';
 
             // Connect to server-sent events
-            const eventSource = new EventSource(`/api/search?q=${encodeURIComponent(query)}`);
+            const eventSource = new EventSource(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}`);
 
             eventSource.addEventListener('status', (event) => {
                 const data = JSON.parse(event.data);

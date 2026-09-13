@@ -9,10 +9,12 @@ import json
 import os
 
 from flask import Flask, Response, render_template, request
+from flask_cors import CORS
 
 from pipeline import run_verity
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
+CORS(app)
 
 
 @app.route("/")

@@ -1,4 +1,4 @@
-# Technical Stack: Verity
+an# Technical Stack: Verity
 
 ## 🏗️ Architecture Overview
 
