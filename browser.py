@@ -16,13 +16,15 @@ if hasattr(sys.stdout, "reconfigure"):
 
 load_dotenv()
 
+STEEL_API_KEY = os.environ["STEEL_API_KEY"]
+OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
+
 
 @contextmanager
 def steel_page(label="", quiet=False):
     """Opens one Steel cloud browser and yields a Playwright page for it, releasing the
     session on the way out no matter what happened inside."""
-    steel_api_key = os.environ["STEEL_API_KEY"]
-    client = Steel(steel_api_key=steel_api_key)
+    client = Steel(steel_api_key=STEEL_API_KEY)
     session = client.sessions.create()
     if not quiet:
         suffix = f" [{label}]" if label else ""

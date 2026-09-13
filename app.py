@@ -7,29 +7,22 @@ Then open: http://localhost:5001
 
 import json
 
-from flask import Flask, Response, request, send_from_directory
-from flask_cors import CORS
+from flask import Flask, Response, render_template, request
 
-app = Flask(__name__, static_folder='static', static_url_path='/static')
-CORS(app)
+from pipeline import run_verity
+
+app = Flask(__name__)
 
 
 @app.route("/")
 def index():
-    return send_from_directory('.', 'index.html')
-
-
-@app.route("/health")
-def health():
-    return {"status": "ok"}
+    return render_template("index.html")
 
 
 @app.route("/api/search")
 def api_search():
     """Streams the run as server-sent events. EventSource can only issue GET requests, so the
     question arrives as a query param rather than a JSON body."""
-    from pipeline import run_verity
-
     question = request.args.get("q", "")
 
     # "error" is reserved by EventSource for transport failures, so pipeline errors go out
@@ -53,4 +46,4 @@ def api_search():
 
 if __name__ == "__main__":
     # threaded so the streaming request doesn't block the page from loading assets
-    app.run(debug=False, host="0.0.0.0", port=5001, threaded=True)
+    app.run(debug=False, port=5001, threaded=True)
