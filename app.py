@@ -8,7 +8,7 @@ Then open: http://localhost:5001
 import json
 import os
 
-from flask import Flask, Response, render_template, request
+from flask import Flask, Response, request, send_from_directory
 from flask_cors import CORS
 
 from pipeline import run_verity
@@ -19,7 +19,7 @@ CORS(app)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return send_from_directory('.', 'index.html')
 
 
 @app.route("/api/search")
