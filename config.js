@@ -1,1 +1,1 @@
-window.VERITY_API_URL = 'https://verity-y6sg.onrender.com/api';
+window.VERITY_API_URL = 'http://localhost:5001/api';
